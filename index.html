@@ -1,0 +1,4848 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoiceLink - Rozwiązanie AI dla Przychodni</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --gradient-start: #00D9FF;
+            --gradient-mid: #7B2CBF;
+            --gradient-end: #9D4EDD;
+            --bg-light: #F8F9FA;
+            --bg-white: #FFFFFF;
+            --text-dark: #1A1A1A;
+            --text-gray: #6B7280;
+            --text-light: #9CA3AF;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background: var(--bg-light);
+        }
+
+        .section {
+            min-height: 100vh;
+            padding: 80px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+            background: var(--bg-light);
+        }
+
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-mid) 50%, var(--gradient-end) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: var(--bg-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            padding: 0 40px;
+        }
+
+        .logo-container {
+            margin-bottom: 50px;
+            animation: fadeInDown 1s ease forwards;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo-voicelink {
+            max-width: 320px;
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(0 10px 30px rgba(0, 217, 255, 0.3));
+            transition: transform 0.3s ease, filter 0.3s ease;
+        }
+
+        .logo-voicelink:hover {
+            transform: scale(1.02);
+            filter: drop-shadow(0 15px 40px rgba(0, 217, 255, 0.4));
+        }
+
+        .hero-title {
+            font-size: 3.2rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            animation: fadeInUp 1s ease 0.3s forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-subtitle {
+            font-size: 1.4rem;
+            color: var(--text-gray);
+            margin-bottom: 40px;
+            font-weight: 400;
+            animation: fadeInUp 1s ease 0.5s forwards;
+            opacity: 0;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: white;
+            padding: 16px 32px;
+            border-radius: 50px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            animation: fadeInUp 1s ease 0.7s forwards;
+            opacity: 0;
+            position: relative;
+        }
+
+        .hero-badge::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 52px;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-mid) 50%, var(--gradient-end) 100%);
+            z-index: -1;
+        }
+
+        .badge-icon {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-mid) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .badge-icon svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .badge-icon svg path {
+            fill: white;
+        }
+
+        .badge-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .hero-features {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 60px;
+            margin-top: 60px;
+            animation: fadeInUp 1s ease 0.9s forwards;
+            opacity: 0;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-feature {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            text-align: center;
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-icon:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.2);
+        }
+
+        .feature-icon svg {
+            width: 30px;
+            height: 30px;
+        }
+
+        .feature-icon svg path {
+            fill: url(#featureGradient);
+        }
+
+        .feature-label {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        /* Problem Section */
+        .problem-section {
+            background: var(--bg-light);
+        }
+
+        .section-title-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 50px;
+        }
+
+        .section-title-wrapper h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 0;
+            text-align: center;
+        }
+
+        .title-icon {
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-mid) 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .title-icon svg {
+            width: 30px;
+            height: 30px;
+        }
+
+        .title-icon svg path {
+            fill: white;
+        }
+
+        .problems-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .problem-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .problem-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 22px;
+            background: linear-gradient(135deg, #FF6B6B 0%, #EE5A5A 50%, #DC3545 100%);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .problem-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(220, 53, 69, 0.15);
+        }
+
+        .problem-card:hover::before {
+            opacity: 1;
+        }
+
+        .problem-card.full-width {
+            grid-column: 1 / -1;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .problem-icon {
+            width: 60px;
+            height: 60px;
+            min-width: 60px;
+            background: linear-gradient(135deg, #FFF5F5 0%, #FED7D7 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .problem-icon svg {
+            width: 30px;
+            height: 30px;
+        }
+
+        .problem-icon svg path {
+            fill: #DC3545;
+        }
+
+        .problem-content h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .problem-content p {
+            font-size: 0.95rem;
+            color: var(--text-gray);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.2rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .logo-voicelink {
+                max-width: 240px;
+            }
+
+            .hero-features {
+                flex-direction: column;
+                gap: 25px;
+            }
+
+            .hero-badge {
+                padding: 12px 24px;
+            }
+
+            .badge-text {
+                font-size: 1rem;
+            }
+
+            .section {
+                padding: 60px 20px;
+            }
+
+            .section-title-wrapper h2 {
+                font-size: 1.8rem;
+            }
+
+            .problems-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .problem-card {
+                padding: 24px;
+            }
+
+            .problem-card.full-width {
+                max-width: 100%;
+            }
+        }
+
+        /* Stats Section */
+        .stats-section {
+            background: var(--bg-light);
+        }
+
+        .stats-intro {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 60px;
+            color: var(--text-gray);
+            font-size: 1.15rem;
+            line-height: 1.8;
+        }
+
+        .stats-intro strong {
+            color: #DC3545;
+        }
+
+        /* Big Stats */
+        .big-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            max-width: 1000px;
+            margin: 0 auto 60px;
+        }
+
+        .big-stat {
+            background: white;
+            border-radius: 24px;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(220, 53, 69, 0.1);
+        }
+
+        .big-stat::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #FF6B6B 0%, #DC3545 100%);
+        }
+
+        .stat-percentage {
+            font-size: 4.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #DC3545 0%, #FF6B6B 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 15px;
+        }
+
+        .stat-label {
+            font-size: 1.05rem;
+            color: var(--text-dark);
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        .stat-source {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-top: 15px;
+            font-style: italic;
+        }
+
+        /* Visual Chart */
+        .chart-container {
+            max-width: 800px;
+            margin: 0 auto 60px;
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        .chart-title {
+            text-align: center;
+            color: var(--text-dark);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+
+        .chart-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .chart-bar-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .chart-bar-label {
+            width: 200px;
+            min-width: 200px;
+            font-size: 0.95rem;
+            color: var(--text-gray);
+            text-align: right;
+        }
+
+        .chart-bar-wrapper {
+            flex: 1;
+            height: 40px;
+            background: var(--bg-light);
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .chart-bar-fill {
+            height: 100%;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 15px;
+            font-weight: 700;
+            color: white;
+            font-size: 1rem;
+            transition: width 1.5s ease-out;
+        }
+
+        .chart-bar-fill.red {
+            background: linear-gradient(90deg, #FF6B6B 0%, #DC3545 100%);
+        }
+
+        .chart-bar-fill.orange {
+            background: linear-gradient(90deg, #FFA94D 0%, #FF8C00 100%);
+        }
+
+        .chart-bar-fill.yellow {
+            background: linear-gradient(90deg, #4CAF50 0%, #45a049 100%);
+        }
+
+        /* Warning Box */
+        .warning-box {
+            max-width: 900px;
+            margin: 0 auto 60px;
+            background: white;
+            border-left: 4px solid #DC3545;
+            border-radius: 20px;
+            padding: 35px 40px;
+            display: flex;
+            gap: 25px;
+            align-items: flex-start;
+            box-shadow: 0 10px 40px rgba(220, 53, 69, 0.1);
+        }
+
+        .warning-icon {
+            width: 60px;
+            height: 60px;
+            min-width: 60px;
+            background: linear-gradient(135deg, #FFF5F5 0%, #FED7D7 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .warning-icon svg {
+            width: 32px;
+            height: 32px;
+        }
+
+        .warning-icon svg path {
+            fill: #DC3545;
+        }
+
+        .warning-content h3 {
+            color: #DC3545;
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .warning-content p {
+            color: var(--text-gray);
+            font-size: 1rem;
+            line-height: 1.7;
+            margin: 0;
+        }
+
+        .warning-content strong {
+            color: var(--text-dark);
+        }
+
+        /* Causes Grid */
+        .causes-title {
+            text-align: center;
+            color: var(--text-dark);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 35px;
+        }
+
+        .causes-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .cause-item {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .cause-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .cause-number {
+            width: 32px;
+            height: 32px;
+            min-width: 32px;
+            background: linear-gradient(135deg, #FF6B6B 0%, #DC3545 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .cause-text {
+            color: var(--text-gray);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        /* Consequences Section */
+        .consequences-section {
+            background: var(--bg-light);
+        }
+
+        .consequences-box {
+            background: white;
+            border-radius: 24px;
+            padding: 50px;
+            max-width: 1000px;
+            margin: 0 auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            position: relative;
+        }
+
+        .consequences-box::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            border-radius: 27px;
+            background: linear-gradient(135deg, #FF6B6B 0%, #DC3545 50%, #C82333 100%);
+            z-index: -1;
+        }
+
+        .consequences-header {
+            text-align: center;
+            margin-bottom: 45px;
+        }
+
+        .consequences-header h2 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+        }
+
+        .consequences-header p {
+            color: var(--text-gray);
+            font-size: 1.1rem;
+        }
+
+        .consequences-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+        }
+
+        .consequence-card {
+            background: linear-gradient(135deg, #FFF5F5 0%, #FED7D7 100%);
+            border-radius: 16px;
+            padding: 30px;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            transition: transform 0.3s ease;
+        }
+
+        .consequence-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .consequence-icon {
+            width: 55px;
+            height: 55px;
+            min-width: 55px;
+            background: white;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.15);
+        }
+
+        .consequence-icon svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        .consequence-icon svg path {
+            fill: #DC3545;
+        }
+
+        .consequence-content h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #C82333;
+            margin-bottom: 8px;
+        }
+
+        .consequence-content p {
+            font-size: 0.95rem;
+            color: var(--text-gray);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .consequences-bottom {
+            margin-top: 40px;
+            text-align: center;
+            padding: 25px;
+            background: white;
+            border-radius: 16px;
+            position: relative;
+        }
+
+        .consequences-bottom::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-mid) 50%, var(--gradient-end) 100%);
+            z-index: -1;
+        }
+
+        .consequences-bottom p {
+            color: var(--text-dark);
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .consequences-bottom span {
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-mid) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Big Question Section */
+        .big-question-section {
+            background: var(--bg-light);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .big-question {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .big-question h2 {
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1.3;
+            color: var(--text-dark);
+        }
+
+        .big-question h2 span {
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-mid) 50%, var(--gradient-end) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .big-question-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-mid) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            box-shadow: 0 15px 40px rgba(0, 217, 255, 0.3);
+        }
+
+        .big-question-icon svg {
+            width: 40px;
+            height: 40px;
+        }
+
+        .big-question-icon svg path {
+            fill: white;
+        }
+
+        @media (max-width: 768px) {
+            .big-question h2 {
+                font-size: 2rem;
+            }
+
+            .big-question-section {
+                padding: 70px 20px;
+            }
+        }
+
+        /* Solution Section */
+        .solution-section {
+            background: var(--bg-light);
+        }
+
+        .solution-main-box {
+            background: white;
+            border-radius: 30px;
+            padding: 60px;
+            max-width: 1100px;
+            margin: 0 auto;
+            box-shadow: 0 20px 60px rgba(0, 217, 255, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .solution-main-box::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            border-radius: 33px;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-mid) 50%, var(--gradient-end) 100%);
+            z-index: -1;
+        }
+
+        .solution-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .solution-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-mid) 100%);
+            color: white;
+            font-size: 0.85rem;
+            font-weight: 700;
+            padding: 8px 20px;
+            border-radius: 30px;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .solution-header h2 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+            line-height: 1.2;
+        }
+
+        .solution-header p {
+            font-size: 1.2rem;
+            color: var(--text-gray);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        .solution-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+
+        .solution-image-placeholder {
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.08) 0%, rgba(123, 44, 191, 0.08) 100%);
+            border-radius: 24px;
+            padding: 40px;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed rgba(123, 44, 191, 0.3);
+            position: relative;
+        }
+
+        .solution-image-placeholder img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 16px;
+        }
+
+        .placeholder-text {
+            color: var(--gradient-mid);
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .placeholder-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-mid) 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .placeholder-icon svg {
+            width: 45px;
+            height: 45px;
+        }
+
+        .placeholder-icon svg path {
+            fill: white;
+        }
+
+        .solution-benefits {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .solution-benefit {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .benefit-icon-box {
+            width: 60px;
+            height: 60px;
+            min-width: 60px;
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.1) 0%, rgba(123, 44, 191, 0.1) 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .benefit-icon-box svg {
+            width: 30px;
+            height: 30px;
+        }
+
+        .benefit-icon-box svg path {
+            fill: url(#featureGradient);
+        }
+
+        .benefit-text h4 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+        }
+
+        .benefit-text p {
+            font-size: 0.95rem;
+            color: var(--text-gray);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* Solution Section Responsive */
+        @media (max-width: 968px) {
+            .solution-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .solution-main-box {
+                padding: 40px 30px;
+            }
+
+            .solution-header h2 {
+                font-size: 2.2rem;
+            }
+
+            .solution-image-placeholder {
+                min-height: 300px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .solution-main-box {
+                padding: 30px 20px;
+            }
+
+            .solution-header h2 {
+                font-size: 1.8rem;
+            }
+
+            .solution-header p {
+                font-size: 1rem;
+            }
+
+            .solution-benefit {
+                flex-direction: column;
+                text-align: center;
+                align-items: center;
+            }
+        }
+
+        /* How It Works Section */
+        .how-it-works-section {
+            background: var(--bg-light);
+        }
+
+        .how-it-works-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .how-it-works-header h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+        }
+
+        .how-it-works-header p {
+            font-size: 1.15rem;
+            color: var(--text-gray);
+        }
+
+        .process-flow {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 0;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .process-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            flex: 1;
+            max-width: 180px;
+            position: relative;
+        }
+
+        .step-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-mid) 50%, var(--gradient-end) 100%);
+            padding: 3px;
+        }
+
+        .step-circle::before {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            right: 3px;
+            bottom: 3px;
+            border-radius: 50%;
+            background: white;
+            z-index: 0;
+        }
+
+        .process-step:hover .step-circle {
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(0, 217, 255, 0.3);
+        }
+
+        .step-circle > svg {
+            width: 36px;
+            height: 36px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-circle > svg path {
+            fill: url(#featureGradient);
+        }
+
+        .step-robot-icon {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-number {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-mid) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: white;
+            border: 3px solid white;
+            z-index: 3;
+        }
+
+        .step-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .step-desc {
+            font-size: 0.85rem;
+            color: var(--text-gray);
+            line-height: 1.5;
+        }
+
+        /* Arrow between steps */
+        .step-arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-top: 25px;
+        }
+
+        .step-arrow svg {
+            width: 30px;
+            height: 30px;
+            opacity: 0.4;
+        }
+
+        .step-arrow svg path {
+            fill: var(--gradient-mid);
+        }
+
+        /* Comparison Table Section */
+        .comparison-section {
+            background: var(--bg-light);
+        }
+
+        .comparison-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .comparison-header h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+        }
+
+        .comparison-header p {
+            font-size: 1.15rem;
+            color: var(--text-gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .comparison-table-wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-mid) 50%, var(--gradient-end) 100%);
+            border-radius: 27px;
+            padding: 3px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.08);
+        }
+
+        .comparison-table {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+        }
+
+        .comparison-table-header {
+            display: grid;
+            grid-template-columns: 1fr 150px 150px;
+            background: var(--bg-light);
+            padding: 25px 30px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .comparison-table-header .col-feature {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .comparison-table-header .col-label {
+            text-align: center;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--gradient-mid);
+        }
+
+        .comparison-row {
+            display: grid;
+            grid-template-columns: 1fr 150px 150px;
+            padding: 20px 30px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            align-items: center;
+            transition: background 0.2s ease;
+        }
+
+        .comparison-row:hover {
+            background: rgba(0, 217, 255, 0.03);
+        }
+
+        .comparison-row:last-child {
+            border-bottom: none;
+        }
+
+        .comparison-row .row-feature {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .comparison-row .row-feature .feature-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-light);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .comparison-row .row-feature .feature-icon svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .comparison-row .row-feature .feature-icon svg path {
+            fill: var(--gradient-mid);
+        }
+
+        .comparison-row .row-feature span {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .comparison-row .col-value {
+            text-align: center;
+        }
+
+        .comparison-row .value-text {
+            font-size: 0.9rem;
+            color: var(--text-gray);
+            font-weight: 500;
+        }
+
+        .comparison-row .value-text.negative {
+            color: #DC3545;
+        }
+
+        .comparison-row .value-text.positive {
+            color: #2E7D32;
+            font-weight: 700;
+        }
+
+        .check-icon, .x-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .check-icon {
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+        }
+
+        .check-icon svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .check-icon svg path {
+            fill: white;
+        }
+
+        .x-icon {
+            background: linear-gradient(135deg, #FF6B6B 0%, #DC3545 100%);
+        }
+
+        .x-icon svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .x-icon svg path {
+            fill: white;
+        }
+
+        .comparison-footer {
+            padding: 25px 30px;
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.08) 0%, rgba(123, 44, 191, 0.08) 100%);
+            text-align: center;
+        }
+
+        .comparison-footer p {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin: 0;
+        }
+
+        .comparison-footer span {
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-mid) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        @media (max-width: 768px) {
+            .comparison-table-header,
+            .comparison-row {
+                grid-template-columns: 1fr 100px 100px;
+                padding: 15px 20px;
+            }
+
+            .comparison-table-header .col-label {
+                font-size: 0.8rem;
+            }
+
+            .comparison-row .row-feature span {
+                font-size: 0.85rem;
+            }
+
+            .comparison-row .row-feature .feature-icon {
+                display: none;
+            }
+
+            .comparison-header h2 {
+                font-size: 1.8rem;
+            }
+        }
+
+        /* Benefits Summary Section */
+        .benefits-section {
+            background: var(--bg-light);
+        }
+
+        .benefits-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .benefits-header h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+        }
+
+        .benefits-header p {
+            font-size: 1.15rem;
+            color: var(--text-gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .benefit-card {
+            background: white;
+            border-radius: 20px;
+            padding: 35px 25px;
+            text-align: center;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0, 217, 255, 0.15);
+        }
+
+        .benefit-card-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-mid) 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .benefit-card-icon svg {
+            width: 36px;
+            height: 36px;
+        }
+
+        .benefit-card-icon svg path {
+            fill: white;
+        }
+
+        .benefit-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+        }
+
+        .benefit-card p {
+            font-size: 0.95rem;
+            color: var(--text-gray);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        @media (max-width: 968px) {
+            .benefits-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .benefits-header h2 {
+                font-size: 1.8rem;
+            }
+        }
+
+        /* Demo CTA Section */
+        .demo-section {
+            min-height: 100vh;
+            background: var(--bg-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .demo-content {
+            max-width: 800px;
+        }
+
+        .demo-title {
+            font-size: 4rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 25px;
+            line-height: 1.2;
+        }
+
+        .demo-title span {
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-mid) 50%, var(--gradient-end) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .demo-subtitle {
+            font-size: 1.3rem;
+            color: var(--text-gray);
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .demo-title {
+                font-size: 2.5rem;
+            }
+
+            .demo-subtitle {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Final CTA Section */
+        .final-cta-section {
+            min-height: 100vh;
+            background: var(--bg-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .final-cta-content {
+            max-width: 900px;
+        }
+
+        .final-cta-logo {
+            max-width: 280px;
+            margin: 0 auto 50px;
+        }
+
+        .final-cta-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .final-cta-title span {
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-mid) 50%, var(--gradient-end) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .final-cta-subtitle {
+            font-size: 1.5rem;
+            color: var(--text-gray);
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .final-cta-title {
+                font-size: 2.2rem;
+            }
+
+            .final-cta-subtitle {
+                font-size: 1.2rem;
+            }
+
+            .final-cta-logo {
+                max-width: 200px;
+            }
+        }
+
+        /* Pricing Calculator Section */
+        .pricing-section {
+            background: var(--bg-light);
+            padding: 100px 20px;
+        }
+
+        .pricing-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .pricing-header h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+        }
+
+        .pricing-header p {
+            font-size: 1.15rem;
+            color: var(--text-gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .calculator-box {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 30px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0, 217, 255, 0.12);
+            position: relative;
+        }
+
+        .calculator-box::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            border-radius: 33px;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-mid) 50%, var(--gradient-end) 100%);
+            z-index: -1;
+        }
+
+        .calc-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .calc-item {
+            background: var(--bg-light);
+            border-radius: 16px;
+            padding: 25px;
+        }
+
+        .calc-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .calc-item-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .calc-item-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-mid) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .calc-item-icon svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .calc-item-icon svg path {
+            fill: white;
+        }
+
+        .calc-item-label span {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .calc-item-price {
+            font-size: 0.85rem;
+            color: var(--text-gray);
+        }
+
+        .calc-item-input {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .calc-item-input input[type="range"] {
+            flex: 1;
+            height: 8px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: linear-gradient(90deg, var(--gradient-start), var(--gradient-mid));
+            border-radius: 4px;
+            outline: none;
+        }
+
+        .calc-item-input input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border: 3px solid var(--gradient-mid);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .calc-item-input input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            background: white;
+            border: 3px solid var(--gradient-mid);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .calc-item-value {
+            min-width: 70px;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--gradient-mid);
+        }
+
+        .calc-item-cost {
+            text-align: right;
+            margin-top: 12px;
+            font-size: 0.9rem;
+            color: var(--text-gray);
+        }
+
+        .calc-item-cost strong {
+            color: var(--text-dark);
+            font-weight: 700;
+        }
+
+        /* One-time vs Monthly */
+        .calc-section-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-gray);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .calc-section-label.onetime {
+            color: var(--gradient-mid);
+        }
+
+        .calc-section-label.monthly {
+            color: var(--gradient-start);
+        }
+
+        /* Total */
+        .calc-total-section {
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.08) 0%, rgba(123, 44, 191, 0.08) 100%);
+            border-radius: 20px;
+            padding: 30px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .calc-total-box {
+            text-align: center;
+        }
+
+        .calc-total-label {
+            font-size: 0.9rem;
+            color: var(--text-gray);
+            margin-bottom: 8px;
+        }
+
+        .calc-total-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+        }
+
+        .calc-total-value.onetime {
+            color: var(--gradient-mid);
+        }
+
+        .calc-total-value.monthly {
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-mid) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .calc-total-value span {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .calc-total-note {
+            font-size: 0.8rem;
+            color: var(--text-gray);
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .calc-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .calc-total-section {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .calculator-box {
+                padding: 30px 20px;
+            }
+
+            .pricing-header h2 {
+                font-size: 1.8rem;
+            }
+
+            .calc-total-value {
+                font-size: 2rem;
+            }
+        }
+
+        /* Agent Features Section */
+        .agent-features-section {
+            background: var(--bg-light);
+        }
+
+        .agent-features-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .agent-features-header h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+        }
+
+        .agent-features-header p {
+            font-size: 1.15rem;
+            color: var(--text-gray);
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px 25px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 217, 255, 0.15);
+        }
+
+        .feature-card.highlight {
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.08) 0%, rgba(123, 44, 191, 0.08) 100%);
+            border: 2px solid rgba(0, 217, 255, 0.2);
+        }
+
+        .feature-card-icon {
+            width: 55px;
+            height: 55px;
+            min-width: 55px;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-mid) 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .feature-card-icon svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        .feature-card-icon svg path {
+            fill: white;
+        }
+
+        .feature-card-content h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .feature-card-content p {
+            font-size: 0.95rem;
+            color: var(--text-gray);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        @media (max-width: 968px) {
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .agent-features-header h2 {
+                font-size: 1.8rem;
+            }
+
+            .feature-card {
+                flex-direction: column;
+                text-align: center;
+                align-items: center;
+            }
+        }
+
+        /* Time Savings Section */
+        .savings-section {
+            background: var(--bg-light);
+        }
+
+        .savings-header {
+            text-align: center;
+            margin-bottom: 70px;
+        }
+
+        .savings-header h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+        }
+
+        .savings-header p {
+            font-size: 1.15rem;
+            color: var(--text-gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .savings-layout {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 60px;
+            max-width: 1100px;
+            margin: 0 auto;
+            align-items: center;
+        }
+
+        /* Left side - inputs */
+        .savings-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .input-row {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: white;
+            padding: 20px 25px;
+            border-radius: 16px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+        }
+
+        .input-row .row-icon {
+            width: 50px;
+            height: 50px;
+            min-width: 50px;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-mid) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .input-row .row-icon svg {
+            width: 26px;
+            height: 26px;
+        }
+
+        .input-row .row-icon svg path {
+            fill: white;
+        }
+
+        .input-row .row-content {
+            flex: 1;
+        }
+
+        .input-row .row-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            line-height: 1.2;
+        }
+
+        .input-row .row-label {
+            font-size: 0.9rem;
+            color: var(--text-gray);
+        }
+
+        .input-row .row-multiply {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gradient-mid);
+        }
+
+        /* Savings slider */
+        .savings-slider {
+            width: 100%;
+            margin-top: 10px;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            background: linear-gradient(90deg, var(--gradient-start) 0%, var(--gradient-mid) 100%);
+            border-radius: 3px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .savings-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid var(--gradient-mid);
+            box-shadow: 0 2px 8px rgba(123, 44, 191, 0.3);
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .savings-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+            box-shadow: 0 3px 12px rgba(123, 44, 191, 0.4);
+        }
+
+        .savings-slider::-moz-range-thumb {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid var(--gradient-mid);
+            box-shadow: 0 2px 8px rgba(123, 44, 191, 0.3);
+            cursor: pointer;
+        }
+
+        /* Right side - visual results */
+        .savings-visual {
+            position: relative;
+        }
+
+        .time-circle {
+            width: 320px;
+            height: 320px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .circle-bg {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(
+                from 0deg,
+                var(--gradient-start) 0deg,
+                var(--gradient-mid) 120deg,
+                var(--gradient-end) 200deg,
+                rgba(157, 78, 221, 0.2) 200deg,
+                rgba(157, 78, 221, 0.1) 360deg
+            );
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 20px 60px rgba(123, 44, 191, 0.25);
+        }
+
+        .circle-inner {
+            width: 85%;
+            height: 85%;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .circle-inner .big-number {
+            font-size: 4.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-mid) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+        }
+
+        .circle-inner .big-unit {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gradient-mid);
+            margin-top: 5px;
+        }
+
+        .circle-inner .big-label {
+            font-size: 1rem;
+            color: var(--text-gray);
+            margin-top: 10px;
+        }
+
+        /* Stats around circle */
+        .floating-stat {
+            position: absolute;
+            background: white;
+            border-radius: 16px;
+            padding: 15px 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .floating-stat .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .floating-stat .stat-icon svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .floating-stat .stat-content .stat-value {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .floating-stat .stat-content .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-gray);
+        }
+
+        .floating-stat.stat-minutes {
+            top: 0;
+            right: 0;
+        }
+
+        .floating-stat.stat-minutes .stat-icon {
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.15) 0%, rgba(0, 217, 255, 0.25) 100%);
+        }
+
+        .floating-stat.stat-minutes .stat-icon svg path {
+            fill: var(--gradient-start);
+        }
+
+        .floating-stat.stat-days {
+            bottom: 40px;
+            right: -60px;
+        }
+
+        .floating-stat.stat-days .stat-icon {
+            background: linear-gradient(135deg, rgba(123, 44, 191, 0.15) 0%, rgba(123, 44, 191, 0.25) 100%);
+        }
+
+        .floating-stat.stat-days .stat-icon svg path {
+            fill: var(--gradient-mid);
+        }
+
+        .floating-stat.stat-yearly {
+            bottom: -10px;
+            left: 0;
+        }
+
+        .floating-stat.stat-yearly .stat-icon {
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.15) 0%, rgba(76, 175, 80, 0.25) 100%);
+        }
+
+        .floating-stat.stat-yearly .stat-icon svg path {
+            fill: #4CAF50;
+        }
+
+        .floating-stat.stat-yearly .stat-value {
+            color: #2E7D32;
+        }
+
+        /* Savings Section Responsive */
+        @media (max-width: 968px) {
+            .savings-layout {
+                grid-template-columns: 1fr;
+                gap: 50px;
+            }
+
+            .savings-inputs {
+                order: 2;
+            }
+
+            .savings-visual {
+                order: 1;
+            }
+
+            .time-circle {
+                width: 280px;
+                height: 280px;
+            }
+
+            .circle-inner .big-number {
+                font-size: 3.5rem;
+            }
+
+            .floating-stat {
+                position: relative;
+                top: auto !important;
+                right: auto !important;
+                bottom: auto !important;
+                left: auto !important;
+                margin: 10px;
+            }
+
+            .savings-visual {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .floating-stats-mobile {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                margin-top: 20px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .savings-header h2 {
+                font-size: 1.8rem;
+            }
+
+            .time-circle {
+                width: 240px;
+                height: 240px;
+            }
+
+            .circle-inner .big-number {
+                font-size: 3rem;
+            }
+
+            .input-row {
+                padding: 15px 20px;
+            }
+
+            .input-row .row-value {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* How It Works Responsive */
+        @media (max-width: 1100px) {
+            .process-flow {
+                flex-wrap: wrap;
+                gap: 20px;
+            }
+
+            .process-step {
+                flex: 0 0 calc(33.333% - 20px);
+                max-width: none;
+                margin-bottom: 30px;
+            }
+
+            .step-arrow {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .process-flow {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .process-step {
+                flex: none;
+                width: 100%;
+                max-width: 280px;
+            }
+
+            .how-it-works-header h2 {
+                font-size: 2rem;
+            }
+        }
+
+        /* Pain Point Section */
+        .pain-section {
+            background: var(--bg-light);
+        }
+
+        .pain-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 50px;
+        }
+
+        .pain-header h2 {
+            font-size: 2.4rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+            line-height: 1.3;
+        }
+
+        .pain-header p {
+            color: var(--text-gray);
+            font-size: 1.1rem;
+        }
+
+        .tasks-container {
+            max-width: 1100px;
+            margin: 0 auto 50px;
+        }
+
+        .tasks-section-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .tasks-section-label.time-consuming {
+            color: #DC3545;
+        }
+
+        .tasks-section-label.no-time {
+            color: var(--text-gray);
+        }
+
+        .tasks-section-label span {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .label-line {
+            flex: 1;
+            height: 2px;
+            max-width: 150px;
+        }
+
+        .time-consuming .label-line {
+            background: linear-gradient(90deg, transparent, #DC3545);
+        }
+
+        .no-time .label-line {
+            background: linear-gradient(90deg, transparent, var(--text-light));
+        }
+
+        .label-line:last-child {
+            transform: rotate(180deg);
+        }
+
+        .tasks-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .task-card {
+            background: white;
+            border-radius: 20px;
+            padding: 28px 22px;
+            text-align: center;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+
+        .task-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .task-card.highlighted {
+            background: linear-gradient(135deg, rgba(220, 53, 69, 0.05) 0%, rgba(255, 107, 107, 0.08) 100%);
+            border: 2px solid rgba(220, 53, 69, 0.2);
+        }
+
+        .task-card.highlighted .task-icon {
+            background: linear-gradient(135deg, #FFF5F5 0%, #FED7D7 100%);
+        }
+
+        .task-card.highlighted .task-icon svg path {
+            fill: #DC3545;
+        }
+
+        .task-card.highlighted h3 {
+            color: #C82333;
+        }
+
+        .task-card.faded {
+            opacity: 1;
+            background: white;
+        }
+
+        .task-card.faded .task-icon {
+            background: var(--bg-light);
+        }
+
+        .task-icon {
+            width: 65px;
+            height: 65px;
+            background: var(--bg-light);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 18px;
+        }
+
+        .task-icon svg {
+            width: 32px;
+            height: 32px;
+        }
+
+        .task-icon svg path {
+            fill: url(#featureGradient);
+        }
+
+        .task-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .task-card p {
+            font-size: 0.85rem;
+            color: var(--text-gray);
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .vs-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0 30px;
+            gap: 20px;
+        }
+
+        .vs-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--text-light), transparent);
+            max-width: 200px;
+        }
+
+        .vs-badge {
+            background: var(--bg-light);
+            border: 2px solid var(--text-light);
+            color: var(--text-gray);
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 8px 20px;
+            border-radius: 20px;
+        }
+
+        /* Arrow Down */
+        .arrow-down {
+            display: flex;
+            justify-content: center;
+            margin: 40px 0;
+        }
+
+        .arrow-down-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-mid) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: bounceDown 2s ease infinite;
+        }
+
+        @keyframes bounceDown {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(10px); }
+            60% { transform: translateY(5px); }
+        }
+
+        .arrow-down-icon svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        .arrow-down-icon svg path {
+            fill: white;
+        }
+
+        /* Solution Teaser */
+        .solution-teaser {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 24px;
+            padding: 45px 50px;
+            box-shadow: 0 10px 40px rgba(0, 217, 255, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .solution-teaser::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            border-radius: 27px;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-mid) 50%, var(--gradient-end) 100%);
+            z-index: -1;
+        }
+
+        .solution-teaser-content {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .solution-teaser-icon {
+            width: 80px;
+            height: 80px;
+            min-width: 80px;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-mid) 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .solution-teaser-icon svg {
+            width: 45px;
+            height: 45px;
+        }
+
+        .solution-teaser-icon svg path {
+            fill: white;
+        }
+
+        .solution-teaser-text h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+        }
+
+        .solution-teaser-text h3 span {
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-mid) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .solution-teaser-text p {
+            font-size: 1.05rem;
+            color: var(--text-gray);
+            line-height: 1.7;
+            margin: 0;
+        }
+
+        /* Pain Section Responsive */
+        @media (max-width: 968px) {
+            .tasks-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .tasks-section-label span {
+                font-size: 0.95rem;
+            }
+
+            .label-line {
+                max-width: 80px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .tasks-grid {
+                grid-template-columns: 1fr;
+                max-width: 300px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .pain-header h2 {
+                font-size: 1.8rem;
+            }
+
+            .solution-teaser {
+                padding: 30px 25px;
+            }
+
+            .solution-teaser-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .solution-teaser-text h3 {
+                font-size: 1.2rem;
+            }
+
+            .tasks-section-label {
+                flex-wrap: wrap;
+            }
+
+            .label-line {
+                display: none;
+            }
+        }
+
+        /* Stats Section Responsive */
+        @media (max-width: 968px) {
+            .big-stats {
+                grid-template-columns: 1fr;
+                max-width: 400px;
+            }
+
+            .chart-bar-label {
+                width: 120px;
+                min-width: 120px;
+                font-size: 0.85rem;
+            }
+
+            .causes-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stat-percentage {
+                font-size: 3.5rem;
+            }
+
+            .chart-container {
+                padding: 25px;
+            }
+
+            .chart-bar-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .chart-bar-label {
+                width: 100%;
+                text-align: left;
+            }
+
+            .chart-bar-wrapper {
+                width: 100%;
+            }
+
+            .warning-box {
+                flex-direction: column;
+                padding: 25px;
+            }
+
+            .consequences-box {
+                padding: 30px 25px;
+            }
+
+            .consequences-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .consequences-header h2 {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 1.8rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+
+            .logo-voicelink {
+                max-width: 200px;
+            }
+        }
+
+        /* Fullscreen button */
+        .fullscreen-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-mid) 50%, var(--gradient-end) 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(123, 44, 191, 0.4);
+            transition: all 0.3s ease;
+            z-index: 10000;
+        }
+
+        .fullscreen-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(123, 44, 191, 0.5);
+        }
+
+        .fullscreen-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: white;
+        }
+
+        /* Ukryj przycisk w trybie fullscreen */
+        :fullscreen .fullscreen-btn,
+        :-webkit-full-screen .fullscreen-btn {
+            display: none !important;
+        }
+
+        /* Stages Section - Flowchart */
+        .stages-section {
+            background: var(--bg-light);
+        }
+
+        .stages-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .stages-header h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+        }
+
+        .stages-header p {
+            font-size: 1.15rem;
+            color: var(--text-gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .stages-flow {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .stages-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0;
+            position: relative;
+        }
+
+        /* Wrapper na kartę + strzałkę */
+        .stage-wrapper {
+            display: flex;
+            align-items: center;
+            position: relative;
+            padding: 10px;
+        }
+
+        /* Strzałka w prawo (rząd 1) */
+        .stages-row:first-child .stage-wrapper:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-left: 10px solid var(--gradient-mid);
+            z-index: 5;
+        }
+
+        .stages-row:first-child .stage-wrapper:not(:last-child) .stage-card::after {
+            content: '';
+            position: absolute;
+            right: -22px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 22px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--gradient-start), var(--gradient-mid));
+            z-index: 4;
+            border-radius: 0;
+        }
+
+        /* Strzałka w lewo (rząd 2) */
+        .stages-row:last-child .stage-wrapper:not(:first-child):not(:last-child)::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-right: 10px solid var(--gradient-mid);
+            z-index: 5;
+        }
+
+        .stages-row:last-child .stage-wrapper:not(:first-child):not(:last-child) .stage-card::after {
+            content: '';
+            position: absolute;
+            left: -22px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 22px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--gradient-mid), var(--gradient-end));
+            z-index: 4;
+            border-radius: 0;
+        }
+
+        /* Pionowy łącznik między rzędami */
+        .stages-connector {
+            display: flex;
+            justify-content: flex-end;
+            padding-right: calc(12.5% - 5px);
+            position: relative;
+            height: 50px;
+        }
+
+        .stages-connector-line {
+            width: 3px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--gradient-mid), var(--gradient-end));
+            position: relative;
+        }
+
+        .stages-connector-line::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 10px solid var(--gradient-end);
+        }
+
+        /* Karta */
+        .stage-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px 20px;
+            position: relative;
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+            z-index: 1;
+            overflow: hidden;
+            width: 100%;
+            box-shadow: 0 0 0 2px rgba(0, 217, 255, 0.15);
+        }
+
+        .stage-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            border-radius: 0;
+            background: conic-gradient(
+                from 0deg,
+                transparent 0deg,
+                var(--gradient-start) 60deg,
+                var(--gradient-mid) 120deg,
+                var(--gradient-end) 180deg,
+                transparent 240deg,
+                transparent 360deg
+            );
+            z-index: -2;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            animation: none;
+        }
+
+        /* Białe tło wewnątrz karty (nadpisujemy ::after z linii) */
+        .stage-card .stage-card-bg {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            border-radius: 14px;
+            background: white;
+            z-index: -1;
+        }
+
+        /* Aktywna karta */
+        .stage-card.stage-active::before {
+            opacity: 1;
+            animation: spinBorder 2.5s linear infinite;
+        }
+
+        .stage-card.stage-active {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0, 217, 255, 0.2);
+        }
+
+        @keyframes spinBorder {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .stage-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 50px rgba(0, 217, 255, 0.15);
+        }
+
+        .stage-card.stage-active:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 60px rgba(0, 217, 255, 0.25);
+        }
+
+        .stage-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-mid) 100%);
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin-bottom: 14px;
+        }
+
+        .stage-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .stage-card p {
+            font-size: 0.85rem;
+            color: var(--text-gray);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .stage-badge {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.1) 0%, rgba(123, 44, 191, 0.1) 100%);
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--gradient-mid);
+        }
+
+
+        /* Visited stages + complete - ładny zielony gradient na numerze */
+        .stage-card.stage-visited .stage-number,
+        .stage-card.stage-complete .stage-number {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+        }
+
+        /* Rząd 1 - zielone strzałki po przejściu etapu */
+        .stages-row:first-child .stage-wrapper.wrapper-visited::after {
+            border-left-color: #56ab2f !important;
+        }
+
+        .stages-row:first-child .stage-wrapper.wrapper-visited .stage-card::after {
+            background: linear-gradient(90deg, #56ab2f, #a8e063) !important;
+        }
+
+        /* Pionowy łącznik - zielony po przejściu */
+        .stages-connector.connector-visited .stages-connector-line {
+            background: linear-gradient(180deg, #56ab2f, #a8e063);
+        }
+
+        .stages-connector.connector-visited .stages-connector-line::after {
+            border-top-color: #56ab2f;
+        }
+
+        /* Rząd 2 - zielone strzałki po przejściu etapu (adjacent sibling) */
+        .stages-row:last-child .stage-wrapper.wrapper-visited + .stage-wrapper::before {
+            border-right-color: #56ab2f !important;
+        }
+
+        .stages-row:last-child .stage-wrapper.wrapper-visited + .stage-wrapper .stage-card::after {
+            background: linear-gradient(90deg, #56ab2f, #a8e063) !important;
+        }
+
+        /* Ostatni etap (complete) - zielona kręcąca się obramówka */
+        .stage-card.stage-complete::before {
+            opacity: 1;
+            background: conic-gradient(
+                from 0deg,
+                transparent 0deg,
+                #56ab2f 60deg,
+                #a8e063 120deg,
+                #e8f5e9 180deg,
+                transparent 240deg,
+                transparent 360deg
+            );
+            animation: spinBorder 2.5s linear infinite;
+        }
+
+        .stage-card.stage-complete {
+            animation: pulseComplete 0.6s ease;
+            box-shadow: 0 20px 50px rgba(86, 171, 47, 0.25);
+        }
+
+        /* Animacja potwierdzenia - gradientowe kółko */
+        .stage-complete-check {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 50%, #e8f5e9 100%);
+            z-index: 10;
+            align-items: center;
+            justify-content: center;
+            animation: checkPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            box-shadow: 0 8px 30px rgba(86, 171, 47, 0.4);
+        }
+
+        .stage-card.stage-complete .stage-complete-check {
+            display: flex;
+        }
+
+        .stage-complete-check svg {
+            width: 40px;
+            height: 40px;
+            opacity: 0;
+            animation: checkDraw 0.4s ease 0.3s forwards;
+        }
+
+        .stage-complete-check svg path {
+            fill: white;
+        }
+
+        @keyframes pulseComplete {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes checkPop {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            60% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+
+        @keyframes checkDraw {
+            0% { opacity: 0; transform: scale(0.5); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* Reset - po powrocie z ostatniego etapu */
+        .stage-card.stage-complete.stage-fade {
+            animation: none;
+        }
+
+        .stage-card.stage-complete.stage-fade .stage-complete-check {
+            animation: checkFadeOut 0.3s ease forwards;
+        }
+
+        @keyframes checkFadeOut {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+        }
+
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .stages-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            /* Ukryj strzałki poziome w 3 i 4 pozycji */
+            .stages-row:first-child .stage-wrapper:nth-child(2)::after,
+            .stages-row:last-child .stage-wrapper:nth-child(3)::before {
+                display: none;
+            }
+            .stages-row:first-child .stage-wrapper:nth-child(2) .stage-card::after,
+            .stages-row:last-child .stage-wrapper:nth-child(3) .stage-card::after {
+                display: none;
+            }
+
+            .stages-connector {
+                padding-right: calc(25% - 5px);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .stages-row {
+                grid-template-columns: 1fr;
+            }
+
+            /* Ukryj wszystkie strzałki poziome */
+            .stages-row .stage-wrapper::after,
+            .stages-row .stage-wrapper::before,
+            .stages-row .stage-wrapper .stage-card::after {
+                display: none !important;
+            }
+
+            .stages-connector {
+                justify-content: center;
+                padding-right: 0;
+            }
+
+            /* Pionowe strzałki między kartami w mobile */
+            .stage-wrapper:not(:last-child) {
+                padding-bottom: 30px;
+            }
+
+            .stages-row .stage-wrapper:not(:last-child)::after {
+                content: '' !important;
+                display: block !important;
+                position: absolute;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 0;
+                height: 0;
+                border-left: 8px solid transparent;
+                border-right: 8px solid transparent;
+                border-top: 10px solid var(--gradient-mid);
+                right: auto;
+                top: auto;
+            }
+
+            .stages-row .stage-wrapper:not(:last-child) .stage-card::after {
+                content: '' !important;
+                display: block !important;
+                position: absolute;
+                bottom: -20px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 3px;
+                height: 18px;
+                background: linear-gradient(180deg, var(--gradient-start), var(--gradient-mid));
+                top: auto;
+                right: auto;
+                border-radius: 0;
+            }
+
+            .stages-header h2 {
+                font-size: 1.8rem;
+            }
+        }
+
+        /* What You Get Section */
+        .whatyouget-section {
+            background: var(--bg-light);
+        }
+
+        .whatyouget-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .whatyouget-header h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+        }
+
+        .whatyouget-header p {
+            font-size: 1.15rem;
+            color: var(--text-gray);
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        .whatyouget-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            column-gap: 30px;
+            row-gap: 0;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .whatyouget-card {
+            background: white;
+            border-radius: 24px;
+            padding: 45px 35px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: grid;
+            grid-row: span 2;
+            grid-template-rows: subgrid;
+        }
+
+        .whatyouget-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--gradient-start) 0%, var(--gradient-mid) 50%, var(--gradient-end) 100%);
+        }
+
+        .whatyouget-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(0, 217, 255, 0.15);
+        }
+
+        .whatyouget-card-top {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .whatyouget-card-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-mid) 100%);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+        }
+
+        .whatyouget-card-icon svg {
+            width: 40px;
+            height: 40px;
+        }
+
+        .whatyouget-card-icon svg path {
+            fill: white;
+        }
+
+        .whatyouget-card h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+        }
+
+        .whatyouget-card p {
+            font-size: 1rem;
+            color: var(--text-gray);
+            line-height: 1.7;
+            margin: 0 0 20px;
+        }
+
+        .whatyouget-features {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            text-align: left;
+            align-self: start;
+        }
+
+        .whatyouget-features li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 8px 0;
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+
+        .whatyouget-features li .check-icon {
+            width: 22px;
+            height: 22px;
+            min-width: 22px;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-mid) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 1px;
+        }
+
+        .whatyouget-features li .check-icon svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        .whatyouget-features li .check-icon svg path {
+            fill: white;
+        }
+
+        @media (max-width: 968px) {
+            .whatyouget-grid {
+                grid-template-columns: 1fr;
+                max-width: 500px;
+                row-gap: 0;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .whatyouget-header h2 {
+                font-size: 1.8rem;
+            }
+
+            .whatyouget-card {
+                padding: 35px 25px;
+            }
+        }
+    </style>
+    <svg width="0" height="0" style="position: absolute;">
+        <defs>
+            <linearGradient id="featureGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#00D9FF;stop-opacity:1" />
+                <stop offset="50%" style="stop-color:#7B2CBF;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#9D4EDD;stop-opacity:1" />
+            </linearGradient>
+        </defs>
+    </svg>
+</head>
+<body>
+    <button class="fullscreen-btn" onclick="toggleFullscreen()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+        </svg>
+        <span>Pełny ekran</span>
+    </button>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <div class="logo-container">
+                <img src="logo.png" alt="VoiceLink" class="logo-voicelink">
+            </div>
+            
+            <h1 class="hero-title">
+                <span class="gradient-text">Inteligentny Asystent Głosowy</span><br>
+                dla Twojej Przychodni
+            </h1>
+            
+            <p class="hero-subtitle">
+                Automatyzacja rejestracji pacjentów, obsługa telefoniczna 24/7<br>
+                i natychmiastowa odpowiedź na każde połączenie
+            </p>
+
+            <div class="hero-badge">
+                <span class="badge-text">Rozwiązanie AI nowej generacji</span>
+            </div>
+
+            <div class="hero-features">
+                <div class="hero-feature">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 15.5C18.8 15.5 17.5 15.3 16.4 14.9C16.3 14.9 16.2 14.9 16.1 14.9C15.8 14.9 15.6 15 15.4 15.2L13.2 17.4C10.4 15.9 8 13.6 6.6 10.8L8.8 8.6C9.1 8.3 9.2 7.9 9 7.6C8.7 6.5 8.5 5.2 8.5 4C8.5 3.5 8 3 7.5 3H4C3.5 3 3 3.5 3 4C3 13.4 10.6 21 20 21C20.5 21 21 20.5 21 20V16.5C21 16 20.5 15.5 20 15.5Z" fill="url(#featureGradient)"/>
+                        </svg>
+                    </div>
+                    <span class="feature-label">Automatyczne połączenia</span>
+                </div>
+                <div class="hero-feature">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19 4H5C3.89 4 3 4.9 3 6V20C3 21.1 3.89 22 5 22H19C20.1 22 21 21.1 21 20V6C21 4.9 20.1 4 19 4ZM19 20H5V9H19V20ZM7 11H9V13H7V11ZM11 11H13V13H11V11ZM15 11H17V13H15V11ZM7 15H9V17H7V15ZM11 15H13V17H11V15ZM15 15H17V17H15V15Z" fill="url(#featureGradient)"/>
+                        </svg>
+                    </div>
+                    <span class="feature-label">Rejestracja wizyt</span>
+                </div>
+                <div class="hero-feature">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M11.99 2C6.47 2 2 6.48 2 12C2 17.52 6.47 22 11.99 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 11.99 2ZM12 20C7.58 20 4 16.42 4 12C4 7.58 7.58 4 12 4C16.42 4 20 7.58 20 12C20 16.42 16.42 20 12 20ZM12.5 7H11V13L16.25 16.15L17 14.92L12.5 12.25V7Z" fill="url(#featureGradient)"/>
+                        </svg>
+                    </div>
+                    <span class="feature-label">Dostępność 24/7</span>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- Problem Section -->
+    <section class="section problem-section">
+        <div class="container">
+            <div class="section-title-wrapper">
+                <div class="title-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM13 17H11V15H13V17ZM13 13H11V7H13V13Z" fill="white"/>
+                    </svg>
+                </div>
+                <h2>Jak to wygląda <span class="gradient-text">dzisiaj?</span></h2>
+            </div>
+
+            <div class="problems-grid">
+                <!-- Problem 1 -->
+                <div class="problem-card">
+                    <div class="problem-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 15.5C18.8 15.5 17.5 15.3 16.4 14.9C16.3 14.9 16.2 14.9 16.1 14.9C15.8 14.9 15.6 15 15.4 15.2L13.2 17.4C10.4 15.9 8 13.6 6.6 10.8L8.8 8.6C9.1 8.3 9.2 7.9 9 7.6C8.7 6.5 8.5 5.2 8.5 4C8.5 3.5 8 3 7.5 3H4C3.5 3 3 3.5 3 4C3 13.4 10.6 21 20 21C20.5 21 21 20.5 21 20V16.5C21 16 20.5 15.5 20 15.5ZM19 12H21C21 7 17 3 12 3V5C15.87 5 19 8.13 19 12ZM15 12H17C17 9.24 14.76 7 12 7V9C13.66 9 15 10.34 15 12Z" fill="#DC3545"/>
+                        </svg>
+                    </div>
+                    <div class="problem-content">
+                        <h3>Lawina telefonów od rana</h3>
+                        <p>W pierwszej godzinie otwarcia placówki telefony dzwonią bez przerwy. Dziesiątki pacjentów próbuje się dodzwonić jednocześnie.</p>
+                    </div>
+                </div>
+
+                <!-- Problem 2 -->
+                <div class="problem-card">
+                    <div class="problem-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 11C17.66 11 18.99 9.66 18.99 8C18.99 6.34 17.66 5 16 5C14.34 5 13 6.34 13 8C13 9.66 14.34 11 16 11ZM8 11C9.66 11 10.99 9.66 10.99 8C10.99 6.34 9.66 5 8 5C6.34 5 5 6.34 5 8C5 9.66 6.34 11 8 11ZM8 13C5.67 13 1 14.17 1 16.5V19H15V16.5C15 14.17 10.33 13 8 13ZM16 13C15.71 13 15.38 13.02 15.03 13.05C16.19 13.89 17 15.02 17 16.5V19H23V16.5C23 14.17 18.33 13 16 13Z" fill="#DC3545"/>
+                        </svg>
+                    </div>
+                    <div class="problem-content">
+                        <h3>Za mało rąk do pracy</h3>
+                        <p>Recepcja nie jest w stanie odebrać wszystkich połączeń w ciągu kilkunastu sekund. Część pacjentów nie może się dodzwonić.</p>
+                    </div>
+                </div>
+
+                <!-- Problem 3 -->
+                <div class="problem-card">
+                    <div class="problem-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M11.99 2C6.47 2 2 6.48 2 12C2 17.52 6.47 22 11.99 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 11.99 2ZM12 20C7.58 20 4 16.42 4 12C4 7.58 7.58 4 12 4C16.42 4 20 7.58 20 12C20 16.42 16.42 20 12 20ZM12.5 7H11V13L16.25 16.15L17 14.92L12.5 12.25V7Z" fill="#DC3545"/>
+                        </svg>
+                    </div>
+                    <div class="problem-content">
+                        <h3>Długie kolejki na linii</h3>
+                        <p>Pacjenci czekają minutami na połączenie z recepcją. Wielu rozłącza się zniechęconych i próbuje dzwonić ponownie.</p>
+                    </div>
+                </div>
+
+                <!-- Problem 4 -->
+                <div class="problem-card">
+                    <div class="problem-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M11.99 2C6.47 2 2 6.48 2 12C2 17.52 6.47 22 11.99 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 11.99 2ZM12 20C7.58 20 4 16.42 4 12C4 7.58 7.58 4 12 4C16.42 4 20 7.58 20 12C20 16.42 16.42 20 12 20ZM17 9.5C17 8.67 16.33 8 15.5 8C14.67 8 14 8.67 14 9.5C14 10.33 14.67 11 15.5 11C16.33 11 17 10.33 17 9.5ZM10 9.5C10 8.67 9.33 8 8.5 8C7.67 8 7 8.67 7 9.5C7 10.33 7.67 11 8.5 11C9.33 11 10 10.33 10 9.5ZM12 14C9.67 14 7.68 15.45 6.88 17.5H17.12C16.32 15.45 14.33 14 12 14Z" fill="#DC3545"/>
+                        </svg>
+                    </div>
+                    <div class="problem-content">
+                        <h3>Frustracja pacjentów</h3>
+                        <p>Niemożność dodzwonienia się budzi negatywne emocje. Pacjenci są zdenerwowani jeszcze zanim dotrą do przychodni.</p>
+                    </div>
+                </div>
+
+                <!-- Problem 5 - Full width -->
+                <div class="problem-card full-width">
+                    <div class="problem-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3ZM19 19H5V5H19V19ZM7 10H9V17H7V10ZM11 7H13V17H11V7ZM15 13H17V17H15V13Z" fill="#DC3545"/>
+                        </svg>
+                    </div>
+                    <div class="problem-content">
+                        <h3>Recepcja mogłaby robić więcej</h3>
+                        <p>Pracownicy recepcji spędzają większość dnia przy telefonie, zamiast zajmować się pacjentami na miejscu, dokumentacją czy innymi wartościowymi zadaniami.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="section stats-section">
+        <div class="container">
+            <div class="section-title-wrapper">
+                <div class="title-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3ZM19 19H5V5H19V19ZM7 10H9V17H7V10ZM11 7H13V17H11V7ZM15 13H17V17H15V13Z" fill="white"/>
+                    </svg>
+                </div>
+                <h2>Twarde dane <span class="gradient-text">z rynku</span></h2>
+            </div>
+
+            <p class="stats-intro">
+                Badania rynku usług medycznych pokazują skalę problemu z dostępnością telefoniczną polskich przychodni. 
+                Te liczby oznaczają <strong>utraconych pacjentów</strong> i <strong>realne straty finansowe</strong>.
+            </p>
+
+            <!-- Big Statistics -->
+            <div class="big-stats">
+                <div class="big-stat">
+                    <div class="stat-percentage">44%</div>
+                    <div class="stat-label">połączeń do przychodni<br>kończy się niepowodzeniem</div>
+                    <div class="stat-source">Badania ZnanyLekarz</div>
+                </div>
+                <div class="big-stat">
+                    <div class="stat-percentage">59%</div>
+                    <div class="stat-label">pacjentów dzwoni<br>tylko jeden raz</div>
+                    <div class="stat-source">— i nigdy nie wraca</div>
+                </div>
+                <div class="big-stat">
+                    <div class="stat-percentage">19%</div>
+                    <div class="stat-label">rozłącza się zanim<br>ktokolwiek odbierze</div>
+                    <div class="stat-source">Zbyt długie oczekiwanie</div>
+                </div>
+            </div>
+
+            <!-- Visual Chart -->
+            <div class="chart-container">
+                <div class="chart-title">Rezultat 100 połączeń telefonicznych</div>
+                <div class="chart-bars">
+                    <div class="chart-bar-item">
+                        <div class="chart-bar-label">Nieodebrane połączenia</div>
+                        <div class="chart-bar-wrapper">
+                            <div class="chart-bar-fill red" style="width: 44%;">44</div>
+                        </div>
+                    </div>
+                    <div class="chart-bar-item">
+                        <div class="chart-bar-label">Rozłączają się czekając</div>
+                        <div class="chart-bar-wrapper">
+                            <div class="chart-bar-fill orange" style="width: 19%;">19</div>
+                        </div>
+                    </div>
+                    <div class="chart-bar-item">
+                        <div class="chart-bar-label">Skuteczne połączenia</div>
+                        <div class="chart-bar-wrapper">
+                            <div class="chart-bar-fill yellow" style="width: 37%;">37</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Warning Box -->
+            <div class="warning-box">
+                <div class="warning-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 5.99L19.53 19H4.47L12 5.99ZM12 2L1 21H23L12 2ZM13 16H11V18H13V16ZM13 10H11V14H13V10Z" fill="white"/>
+                    </svg>
+                </div>
+                <div class="warning-content">
+                    <h3>Stanowisko Rzecznika Praw Pacjenta</h3>
+                    <p>
+                        Placówka POZ ma <strong>obowiązek zapewnić realny, sprawny kontakt telefoniczny</strong> — 
+                        samo posiadanie numeru telefonu nie spełnia wymogów prawa pacjenta. 
+                        Notoryczne nieodbieranie telefonów może być uznane za <strong>naruszenie zbiorowych praw pacjentów</strong> 
+                        i skutkować postępowaniem kontrolnym.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Causes -->
+            <div class="causes-title">Główne przyczyny problemu</div>
+            <div class="causes-grid">
+                <div class="cause-item">
+                    <div class="cause-number">1</div>
+                    <div class="cause-text">Zbyt mała liczba pracowników rejestracji względem liczby połączeń</div>
+                </div>
+                <div class="cause-item">
+                    <div class="cause-number">2</div>
+                    <div class="cause-text">Kumulacja telefonów w godzinach porannych — szczyt obciążenia</div>
+                </div>
+                <div class="cause-item">
+                    <div class="cause-number">3</div>
+                    <div class="cause-text">Łączenie obsługi telefonicznej z obsługą pacjentów na miejscu</div>
+                </div>
+                <div class="cause-item">
+                    <div class="cause-number">4</div>
+                    <div class="cause-text">Ręczne prowadzenie kalendarza wizyt spowalniające każdą rozmowę</div>
+                </div>
+                <div class="cause-item">
+                    <div class="cause-number">5</div>
+                    <div class="cause-text">Nadmierne obciążenie recepcji sprawami administracyjnymi</div>
+                </div>
+                <div class="cause-item">
+                    <div class="cause-number">6</div>
+                    <div class="cause-text">Ograniczona ilość stanowisk dla pracowników recepcji</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pain Point Section -->
+    <section class="section pain-section">
+        <div class="container">
+            <div class="pain-header">
+                <h2>Jakie czynności pochłaniają pracownikom <span class="gradient-text">najwięcej czasu?</span></h2>
+                <p>Przyjrzyjmy się codziennym obowiązkom pracowników rejestracji</p>
+            </div>
+
+            <div class="tasks-container">
+                <!-- Time-consuming tasks (phone) -->
+                <div class="tasks-section-label time-consuming">
+                    <div class="label-line"></div>
+                    <span>Pochłania większość czasu — obsługa telefoniczna</span>
+                    <div class="label-line"></div>
+                </div>
+
+                <div class="tasks-grid">
+                    <div class="task-card highlighted">
+                        <div class="task-icon">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M20 15.5C18.8 15.5 17.5 15.3 16.4 14.9C16.3 14.9 16.2 14.9 16.1 14.9C15.8 14.9 15.6 15 15.4 15.2L13.2 17.4C10.4 15.9 8 13.6 6.6 10.8L8.8 8.6C9.1 8.3 9.2 7.9 9 7.6C8.7 6.5 8.5 5.2 8.5 4C8.5 3.5 8 3 7.5 3H4C3.5 3 3 3.5 3 4C3 13.4 10.6 21 20 21C20.5 21 21 20.5 21 20V16.5C21 16 20.5 15.5 20 15.5Z" fill="#DC3545"/>
+                            </svg>
+                        </div>
+                        <h3>Odbieranie telefonów</h3>
+                        <p>Setki połączeń dziennie, ciągle te same pytania</p>
+                    </div>
+
+                    <div class="task-card highlighted">
+                        <div class="task-icon">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M19 4H5C3.89 4 3 4.9 3 6V20C3 21.1 3.89 22 5 22H19C20.1 22 21 21.1 21 20V6C21 4.9 20.1 4 19 4ZM19 20H5V9H19V20ZM7 11H9V13H7V11ZM11 11H13V13H11V11ZM15 11H17V13H15V11ZM7 15H9V17H7V15ZM11 15H13V17H11V15ZM15 15H17V17H15V15Z" fill="#DC3545"/>
+                            </svg>
+                        </div>
+                        <h3>Rezerwacja wizyt</h3>
+                        <p>Umawianie, przekładanie i odwoływanie terminów</p>
+                    </div>
+
+                    <div class="task-card highlighted">
+                        <div class="task-icon">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2ZM20 16H6L4 18V4H20V16ZM11 12H13V14H11V12ZM11 6H13V10H11V6Z" fill="#DC3545"/>
+                            </svg>
+                        </div>
+                        <h3>Odpowiadanie na pytania</h3>
+                        <p>Godziny, lokalizacja, usługi, ceny...</p>
+                    </div>
+
+                    <div class="task-card highlighted">
+                        <div class="task-icon">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 1C7.59 1 4 4.59 4 9C4 14.57 10.42 22.73 11.36 23.9C11.56 24.16 11.78 24.16 11.98 23.9C12.92 22.73 20 14.57 20 9C20 4.59 16.41 1 12 1ZM12 21.84C10.08 19.31 6 13.41 6 9C6 5.69 8.69 3 12 3C15.31 3 18 5.69 18 9C18 13.41 13.92 19.31 12 21.84ZM12 6C10.34 6 9 7.34 9 9C9 10.66 10.34 12 12 12C13.66 12 15 10.66 15 9C15 7.34 13.66 6 12 6Z" fill="#DC3545"/>
+                            </svg>
+                        </div>
+                        <h3>Udzielanie informacji</h3>
+                        <p>Dojazd, parking, przygotowanie do wizyty</p>
+                    </div>
+                </div>
+
+                <!-- VS Divider -->
+                <div class="vs-divider">
+                    <div class="vs-line"></div>
+                    <div class="vs-badge">NA CO BRAKUJE CZASU?</div>
+                    <div class="vs-line"></div>
+                </div>
+
+                <!-- Tasks with no time -->
+                <div class="tasks-grid">
+                    <div class="task-card faded">
+                        <div class="task-icon">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M16 11C17.66 11 18.99 9.66 18.99 8C18.99 6.34 17.66 5 16 5C14.34 5 13 6.34 13 8C13 9.66 14.34 11 16 11ZM8 11C9.66 11 10.99 9.66 10.99 8C10.99 6.34 9.66 5 8 5C6.34 5 5 6.34 5 8C5 9.66 6.34 11 8 11ZM8 13C5.67 13 1 14.17 1 16.5V19H15V16.5C15 14.17 10.33 13 8 13ZM16 13C15.71 13 15.38 13.02 15.03 13.05C16.19 13.89 17 15.02 17 16.5V19H23V16.5C23 14.17 18.33 13 16 13Z" fill="url(#featureGradient)"/>
+                            </svg>
+                        </div>
+                        <h3>Praca przy stanowisku obsługi</h3>
+                        <p>Pacjenci na miejscu czekają, bo recepcja jest zajęta telefonem</p>
+                    </div>
+
+                    <div class="task-card faded">
+                        <div class="task-icon">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.89 22 5.99 22H18C19.1 22 20 21.1 20 20V8L14 2ZM18 20H6V4H13V9H18V20ZM9 13V19H7V13H9ZM15 15V19H17V15H15ZM11 11V19H13V11H11Z" fill="url(#featureGradient)"/>
+                            </svg>
+                        </div>
+                        <h3>Przygotowanie dokumentów</h3>
+                        <p>Skierowania, zaświadczenia, druki odkładane na później</p>
+                    </div>
+
+                    <div class="task-card faded">
+                        <div class="task-icon">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3ZM19 19H5V5H19V19ZM17 12H7V10H17V12ZM14 15H7V17H14V15ZM17 7H7V9H17V7Z" fill="url(#featureGradient)"/>
+                            </svg>
+                        </div>
+                        <h3>Prace administracyjne</h3>
+                        <p>Sprawozdania, rozliczenia, raporty dla NFZ</p>
+                    </div>
+
+                    <div class="task-card faded">
+                        <div class="task-icon">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3ZM9 17H7V10H9V17ZM13 17H11V7H13V17ZM17 17H15V13H17V17Z" fill="url(#featureGradient)"/>
+                            </svg>
+                        </div>
+                        <h3>Obsługa wyników</h3>
+                        <p>Przyjmowanie, sortowanie i wydawanie wyników badań</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Arrow Down -->
+            <div class="arrow-down">
+                <div class="arrow-down-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7.41 8.59L12 13.17L16.59 8.59L18 10L12 16L6 10L7.41 8.59Z" fill="white"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Solution Teaser -->
+            <div class="solution-teaser">
+                <div class="solution-teaser-content">
+                    <div class="solution-teaser-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 21C9 21.55 9.45 22 10 22H14C14.55 22 15 21.55 15 21V20H9V21ZM12 2C8.14 2 5 5.14 5 9C5 11.38 6.19 13.47 8 14.74V17C8 17.55 8.45 18 9 18H15C15.55 18 16 17.55 16 17V14.74C17.81 13.47 19 11.38 19 9C19 5.14 15.86 2 12 2ZM14.85 13.1L14 13.7V16H10V13.7L9.15 13.1C7.8 12.16 7 10.63 7 9C7 6.24 9.24 4 12 4C14.76 4 17 6.24 17 9C17 10.63 16.2 12.16 14.85 13.1Z" fill="white"/>
+                        </svg>
+                    </div>
+                    <div class="solution-teaser-text">
+                        <h3>Automatyzując <span>całą obsługę telefoniczną</span> — uwalniamy czas na ważniejsze zadania</h3>
+                        <p>Gdy AI przejmuje telefony, rezerwacje i odpowiadanie na pytania, recepcja wreszcie może zająć się pacjentami przy stanowisku, dokumentacją, wynikami i pracą administracyjną — bez ciągłego przerywania.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Consequences Section -->
+    <section class="section consequences-section">
+        <div class="container">
+            <div class="consequences-box">
+                <div class="consequences-header">
+                    <h2>Skutki <span class="gradient-text">obecnej sytuacji</span></h2>
+                </div>
+
+                <div class="consequences-grid">
+                    <!-- Consequence 1 -->
+                    <div class="consequence-card">
+                        <div class="consequence-icon">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.58 20 4 16.42 4 12C4 7.58 7.58 4 12 4C16.42 4 20 7.58 20 12C20 16.42 16.42 20 12 20ZM15.88 8.29L10 14.17L8.12 12.29C7.73 11.9 7.1 11.9 6.71 12.29C6.32 12.68 6.32 13.31 6.71 13.7L9.3 16.29C9.69 16.68 10.32 16.68 10.71 16.29L17.29 9.71C17.68 9.32 17.68 8.69 17.29 8.3C16.9 7.9 16.27 7.9 15.88 8.29Z" fill="#DC3545"/>
+                            </svg>
+                        </div>
+                        <div class="consequence-content">
+                            <h3>Chaos organizacyjny</h3>
+                            <p>Nieodebrane telefony, zaginione zapisy, podwójne rezerwacje — codzienność, która paraliżuje pracę całego zespołu.</p>
+                        </div>
+                    </div>
+
+                    <!-- Consequence 2 -->
+                    <div class="consequence-card">
+                        <div class="consequence-icon">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M11.99 2C6.47 2 2 6.48 2 12C2 17.52 6.47 22 11.99 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 11.99 2ZM12 20C7.58 20 4 16.42 4 12C4 7.58 7.58 4 12 4C16.42 4 20 7.58 20 12C20 16.42 16.42 20 12 20ZM17 9.5C17 8.67 16.33 8 15.5 8C14.67 8 14 8.67 14 9.5C14 10.33 14.67 11 15.5 11C16.33 11 17 10.33 17 9.5ZM10 9.5C10 8.67 9.33 8 8.5 8C7.67 8 7 8.67 7 9.5C7 10.33 7.67 11 8.5 11C9.33 11 10 10.33 10 9.5ZM12 14C9.67 14 7.68 15.45 6.88 17.5H17.12C16.32 15.45 14.33 14 12 14Z" fill="#DC3545"/>
+                            </svg>
+                        </div>
+                        <div class="consequence-content">
+                            <h3>Sfrustrowani pacjenci</h3>
+                            <p>Niemożność dodzwonienia się budzi złość i niezadowolenie. Negatywne opinie w internecie odstraszają nowych pacjentów.</p>
+                        </div>
+                    </div>
+
+                    <!-- Consequence 3 -->
+                    <div class="consequence-card">
+                        <div class="consequence-icon">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3ZM19 19H5V5H19V19ZM7 10H9V17H7V10ZM11 7H13V17H11V7ZM15 13H17V17H15V13Z" fill="#DC3545"/>
+                            </svg>
+                        </div>
+                        <div class="consequence-content">
+                            <h3>Niska wydolność placówki</h3>
+                            <p>Potencjał przychodni jest blokowany przez wąskie gardło na recepcji. Lekarze czekają, a grafik świeci pustkami.</p>
+                        </div>
+                    </div>
+
+                    <!-- Consequence 4 -->
+                    <div class="consequence-card">
+                        <div class="consequence-icon">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M11.99 2C6.47 2 2 6.48 2 12C2 17.52 6.47 22 11.99 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 11.99 2ZM12 20C7.58 20 4 16.42 4 12C4 7.58 7.58 4 12 4C16.42 4 20 7.58 20 12C20 16.42 16.42 20 12 20ZM12.5 7H11V13L16.25 16.15L17 14.92L12.5 12.25V7Z" fill="#DC3545"/>
+                            </svg>
+                        </div>
+                        <div class="consequence-content">
+                            <h3>Zmarnowany czas recepcji</h3>
+                            <p>Godziny spędzone na powtarzalnych rozmowach telefonicznych zamiast na obsłudze pacjentów przy stanowisku obsługi i ważniejszych zadaniach.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="consequences-bottom">
+                    <p>To nie musi tak wyglądać. <span>Istnieje rozwiązanie.</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Big Question Section -->
+    <section class="big-question-section">
+        <div class="big-question">
+            <div class="big-question-icon">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 21C9 21.55 9.45 22 10 22H14C14.55 22 15 21.55 15 21V20H9V21ZM12 2C8.14 2 5 5.14 5 9C5 11.38 6.19 13.47 8 14.74V17C8 17.55 8.45 18 9 18H15C15.55 18 16 17.55 16 17V14.74C17.81 13.47 19 11.38 19 9C19 5.14 15.86 2 12 2ZM14.85 13.1L14 13.7V16H10V13.7L9.15 13.1C7.8 12.16 7 10.63 7 9C7 6.24 9.24 4 12 4C14.76 4 17 6.24 17 9C17 10.63 16.2 12.16 14.85 13.1Z" fill="white"/>
+                </svg>
+            </div>
+            <h2>A co jeśli <span>każdy telefon</span><br>byłby odbierany i obsługiwany?</h2>
+        </div>
+    </section>
+
+    <!-- Solution Section -->
+    <section class="section solution-section">
+        <div class="container">
+            <div class="solution-main-box">
+                <div class="solution-header">
+                    <div class="solution-badge">Rozwiązanie</div>
+                    <h2>Asystent Głosowy AI <span class="gradient-text">VoiceLink</span></h2>
+                    <p>Automatyzujemy obsługę telefoniczną w przychodniach, uwalniając czas recepcji na to, co naprawdę ważne — kontakt z pacjentem na miejscu.</p>
+                </div>
+
+                <div class="solution-content">
+                    <!-- AI Agent Image -->
+                    <div class="solution-image-placeholder" style="border: none; padding: 20px; background: #F2F2F7; border-radius: 24px;">
+                        <img src="agent.png" alt="Asystent Głosowy AI VoiceLink">
+                    </div>
+
+                    <!-- Benefits -->
+                    <div class="solution-benefits">
+                        <div class="solution-benefit">
+                            <div class="benefit-icon-box">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M11.99 2C6.47 2 2 6.48 2 12C2 17.52 6.47 22 11.99 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 11.99 2ZM12 20C7.58 20 4 16.42 4 12C4 7.58 7.58 4 12 4C16.42 4 20 7.58 20 12C20 16.42 16.42 20 12 20ZM12.5 7H11V13L16.25 16.15L17 14.92L12.5 12.25V7Z" fill="url(#featureGradient)"/>
+                                </svg>
+                            </div>
+                            <div class="benefit-text">
+                                <h4>Skracamy czas obsługi</h4>
+                                <p>AI odbiera telefony natychmiast, bez kolejek i czekania. Pacjent załatwia sprawę w kilkadziesiąt sekund.</p>
+                            </div>
+                        </div>
+
+                        <div class="solution-benefit">
+                            <div class="benefit-icon-box">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M16 11C17.66 11 18.99 9.66 18.99 8C18.99 6.34 17.66 5 16 5C14.34 5 13 6.34 13 8C13 9.66 14.34 11 16 11ZM8 11C9.66 11 10.99 9.66 10.99 8C10.99 6.34 9.66 5 8 5C6.34 5 5 6.34 5 8C5 9.66 6.34 11 8 11ZM8 13C5.67 13 1 14.17 1 16.5V19H15V16.5C15 14.17 10.33 13 8 13ZM16 13C15.71 13 15.38 13.02 15.03 13.05C16.19 13.89 17 15.02 17 16.5V19H23V16.5C23 14.17 18.33 13 16 13Z" fill="url(#featureGradient)"/>
+                                </svg>
+                            </div>
+                            <div class="benefit-text">
+                                <h4>Odciążamy recepcję</h4>
+                                <p>Pracownicy przestają być przywiązani do słuchawki. Wreszcie mogą zająć się pacjentami na miejscu i ważniejszymi zadaniami.</p>
+                            </div>
+                        </div>
+
+                        <div class="solution-benefit">
+                            <div class="benefit-icon-box">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M11.8 10.9C9.53 10.31 8.8 9.7 8.8 8.75C8.8 7.66 9.81 6.9 11.5 6.9C13.28 6.9 13.94 7.75 14 9H16.21C16.14 7.28 15.09 5.7 13 5.19V3H10V5.16C8.06 5.58 6.5 6.84 6.5 8.77C6.5 11.08 8.41 12.23 11.2 12.9C13.7 13.5 14.2 14.38 14.2 15.31C14.2 16 13.71 17.1 11.5 17.1C9.44 17.1 8.63 16.18 8.52 15H6.32C6.44 17.19 8.08 18.42 10 18.83V21H13V18.85C14.95 18.48 16.5 17.35 16.5 15.3C16.5 12.46 14.07 11.49 11.8 10.9Z" fill="url(#featureGradient)"/>
+                                </svg>
+                            </div>
+                            <div class="benefit-text">
+                                <h4>Zmniejszamy koszty</h4>
+                                <p>Jeden asystent AI zastępuje wielu pracowników na linii telefonicznej. Brak chorób, urlopów, rotacji.</p>
+                            </div>
+                        </div>
+
+                        <div class="solution-benefit">
+                            <div class="benefit-icon-box">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M11.99 2C6.47 2 2 6.48 2 12C2 17.52 6.47 22 11.99 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 11.99 2ZM12 20C7.58 20 4 16.42 4 12C4 7.58 7.58 4 12 4C16.42 4 20 7.58 20 12C20 16.42 16.42 20 12 20ZM15.5 11C16.33 11 17 10.33 17 9.5C17 8.67 16.33 8 15.5 8C14.67 8 14 8.67 14 9.5C14 10.33 14.67 11 15.5 11ZM8.5 11C9.33 11 10 10.33 10 9.5C10 8.67 9.33 8 8.5 8C7.67 8 8 8.67 7 9.5C7 10.33 7.67 11 8.5 11ZM12 17.5C14.33 17.5 16.32 16.05 17.12 14H6.88C7.68 16.05 9.67 17.5 12 17.5Z" fill="url(#featureGradient)"/>
+                                </svg>
+                            </div>
+                            <div class="benefit-text">
+                                <h4>Zwiększamy zadowolenie pacjentów</h4>
+                                <p>Koniec z kolejkami i zajętym sygnałem. Pacjenci dodzwaniają się od razu i wychodzą z placówki zadowoleni.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="section how-it-works-section">
+        <div class="container">
+            <div class="how-it-works-header">
+                <h2>Jak to <span class="gradient-text">działa?</span></h2>
+                <p>Prosty proces, który zmienia wszystko</p>
+            </div>
+
+            <div class="process-flow">
+                <!-- Step 1 -->
+                <div class="process-step">
+                    <div class="step-circle">
+                        <span class="step-number">1</span>
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 15.5C18.8 15.5 17.5 15.3 16.4 14.9C16.3 14.9 16.2 14.9 16.1 14.9C15.8 14.9 15.6 15 15.4 15.2L13.2 17.4C10.4 15.9 8 13.6 6.6 10.8L8.8 8.6C9.1 8.3 9.2 7.9 9 7.6C8.7 6.5 8.5 5.2 8.5 4C8.5 3.5 8 3 7.5 3H4C3.5 3 3 3.5 3 4C3 13.4 10.6 21 20 21C20.5 21 21 20.5 21 20V16.5C21 16 20.5 15.5 20 15.5Z" fill="url(#featureGradient)"/>
+                        </svg>
+                    </div>
+                    <div class="step-title">Pacjent dzwoni</div>
+                    <div class="step-desc">Na numer przychodni, o dowolnej porze</div>
+                </div>
+
+                <div class="step-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8.59 16.59L13.17 12L8.59 7.41L10 6L16 12L10 18L8.59 16.59Z" fill="currentColor"/>
+                    </svg>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="process-step">
+                    <div class="step-circle">
+                        <span class="step-number">2</span>
+                        <img src="robot.png" alt="AI" class="step-robot-icon">
+                    </div>
+                    <div class="step-title">Asystent AI odbiera</div>
+                    <div class="step-desc">Natychmiast, bez czekania i kolejek</div>
+                </div>
+
+                <div class="step-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8.59 16.59L13.17 12L8.59 7.41L10 6L16 12L10 18L8.59 16.59Z" fill="currentColor"/>
+                    </svg>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="process-step">
+                    <div class="step-circle">
+                        <span class="step-number">3</span>
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2ZM20 16H6L4 18V4H20V16Z" fill="url(#featureGradient)"/>
+                        </svg>
+                    </div>
+                    <div class="step-title">Prowadzi rozmowę</div>
+                    <div class="step-desc">Naturalny dialog jak z człowiekiem</div>
+                </div>
+
+                <div class="step-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8.59 16.59L13.17 12L8.59 7.41L10 6L16 12L10 18L8.59 16.59Z" fill="currentColor"/>
+                    </svg>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="process-step">
+                    <div class="step-circle">
+                        <span class="step-number">4</span>
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="9" fill="white" stroke="url(#featureGradient)" stroke-width="2"/>
+                            <path d="M12.01 17H11.99C11.44 17 11 16.55 11 16C11 15.45 11.45 15 12 15C12.55 15 13 15.45 13 16C13 16.55 12.56 17 12.01 17ZM13 13H11C11 10.75 13.5 11 13.5 9.5C13.5 8.67 12.83 8 12 8C11.17 8 10.5 8.67 10.5 9.5H8.5C8.5 7.57 10.07 6 12 6C13.93 6 15.5 7.57 15.5 9.5C15.5 11.5 13 11.75 13 13Z" fill="url(#featureGradient)"/>
+                        </svg>
+                    </div>
+                    <div class="step-title">Odpowiada na pytania</div>
+                    <div class="step-desc">Godziny, usługi, ceny, dojazd</div>
+                </div>
+
+                <div class="step-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8.59 16.59L13.17 12L8.59 7.41L10 6L16 12L10 18L8.59 16.59Z" fill="currentColor"/>
+                    </svg>
+                </div>
+
+                <!-- Step 5 -->
+                <div class="process-step">
+                    <div class="step-circle">
+                        <span class="step-number">5</span>
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3ZM19 19H5V5H19V19ZM7 10H9V17H7V10ZM11 7H13V17H11V7ZM15 13H17V17H15V13Z" fill="url(#featureGradient)"/>
+                        </svg>
+                    </div>
+                    <div class="step-title">Konsultuje potrzeby</div>
+                    <div class="step-desc">Dopytuje i dobiera specjalistę</div>
+                </div>
+
+                <div class="step-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8.59 16.59L13.17 12L8.59 7.41L10 6L16 12L10 18L8.59 16.59Z" fill="currentColor"/>
+                    </svg>
+                </div>
+
+                <!-- Step 6 -->
+                <div class="process-step">
+                    <div class="step-circle">
+                        <span class="step-number">6</span>
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19 4H5C3.89 4 3 4.9 3 6V20C3 21.1 3.89 22 5 22H19C20.1 22 21 21.1 21 20V6C21 4.9 20.1 4 19 4ZM19 20H5V9H19V20ZM7 11H9V13H7V11ZM11 11H13V13H11V11ZM15 11H17V13H15V11ZM7 15H9V17H7V15ZM11 15H13V17H11V15ZM15 15H17V17H15V15Z" fill="url(#featureGradient)"/>
+                        </svg>
+                    </div>
+                    <div class="step-title">Umawia wizytę</div>
+                    <div class="step-desc">Rezerwuje termin w kalendarzu</div>
+                </div>
+
+                <div class="step-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8.59 16.59L13.17 12L8.59 7.41L10 6L16 12L10 18L8.59 16.59Z" fill="currentColor"/>
+                    </svg>
+                </div>
+
+                <!-- Step 7 -->
+                <div class="process-step">
+                    <div class="step-circle">
+                        <span class="step-number">7</span>
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2ZM20 16H6L4 18V4H20V16ZM9 11H11V13H9V11ZM13 11H15V13H13V11ZM17 11H19V13H17V11Z" fill="url(#featureGradient)"/>
+                        </svg>
+                    </div>
+                    <div class="step-title">Wysyła potwierdzenie</div>
+                    <div class="step-desc">SMS z datą, godziną i adresem</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Agent Features Section -->
+    <section class="section agent-features-section">
+        <div class="container">
+            <div class="agent-features-header">
+                <h2>Dlaczego <span class="gradient-text">VoiceLink?</span></h2>
+                <p>Poznaj kluczowe możliwości naszego asystenta głosowego AI, które wyróżniają go na tle tradycyjnej recepcji</p>
+            </div>
+
+            <div class="features-grid">
+                <!-- Feature 1 -->
+                <div class="feature-card">
+                    <div class="feature-card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M11.99 2C6.47 2 2 6.48 2 12C2 17.52 6.47 22 11.99 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 11.99 2ZM12 20C7.58 20 4 16.42 4 12C4 7.58 7.58 4 12 4C16.42 4 20 7.58 20 12C20 16.42 16.42 20 12 20ZM12.5 7H11V13L16.25 16.15L17 14.92L12.5 12.25V7Z" fill="white"/>
+                        </svg>
+                    </div>
+                    <div class="feature-card-content">
+                        <h3>Dostępność 24/7</h3>
+                        <p>Odbiera telefony o każdej porze — w nocy, w weekendy, w święta. Cały rok na okrągło, bez przerw i dni wolnych.</p>
+                    </div>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="feature-card">
+                    <div class="feature-card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M4 6H2V20C2 21.1 2.9 22 4 22H18V20H4V6ZM20 2H8C6.9 2 6 2.9 6 4V16C6 17.1 6.9 18 8 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2ZM20 16H8V4H20V16ZM10 9H18V11H10V9ZM10 12H14V14H10V12ZM10 6H18V8H10V6Z" fill="white"/>
+                        </svg>
+                    </div>
+                    <div class="feature-card-content">
+                        <h3>Wiele rozmów jednocześnie</h3>
+                        <p>Prowadzi do 10 rozmów naraz. Koniec z kolejkami i nieodebranymi połączeniami w godzinach szczytu.</p>
+                    </div>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="feature-card">
+                    <div class="feature-card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 11C17.66 11 18.99 9.66 18.99 8C18.99 6.34 17.66 5 16 5C14.34 5 13 6.34 13 8C13 9.66 14.34 11 16 11ZM8 11C9.66 11 10.99 9.66 10.99 8C10.99 6.34 9.66 5 8 5C6.34 5 5 6.34 5 8C5 9.66 6.34 11 8 11ZM8 13C5.67 13 1 14.17 1 16.5V19H15V16.5C15 14.17 10.33 13 8 13ZM16 13C15.71 13 15.38 13.02 15.03 13.05C16.19 13.89 17 15.02 17 16.5V19H23V16.5C23 14.17 18.33 13 16 13Z" fill="white"/>
+                        </svg>
+                    </div>
+                    <div class="feature-card-content">
+                        <h3>Odciąża zespół recepcji</h3>
+                        <p>Przejmuje powtarzalne rozmowy telefoniczne, uwalniając czas pracowników na obsługę pacjentów na miejscu.</p>
+                    </div>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="feature-card">
+                    <div class="feature-card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3ZM19 19H5V5H19V19ZM17.99 9L16.58 7.58L9.99 14.17L7.41 11.6L5.99 13.01L9.99 17L17.99 9Z" fill="white"/>
+                        </svg>
+                    </div>
+                    <div class="feature-card-content">
+                        <h3>Niezawodność bez urlopów</h3>
+                        <p>Nie choruje, nie bierze urlopów, nie ma złych dni. Działa stabilnie przez cały rok bez przerw.</p>
+                    </div>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="feature-card">
+                    <div class="feature-card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M11.99 2C6.47 2 2 6.48 2 12C2 17.52 6.47 22 11.99 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 11.99 2ZM12 20C7.58 20 4 16.42 4 12C4 7.58 7.58 4 12 4C16.42 4 20 7.58 20 12C20 16.42 16.42 20 12 20ZM15.5 11C16.33 11 17 10.33 17 9.5C17 8.67 16.33 8 15.5 8C14.67 8 14 8.67 14 9.5C14 10.33 14.67 11 15.5 11ZM8.5 11C9.33 11 10 10.33 10 9.5C10 8.67 9.33 8 8.5 8C7.67 8 7 8.67 7 9.5C7 10.33 7.67 11 8.5 11ZM12 17.5C14.33 17.5 16.32 16.05 17.12 14H6.88C7.68 16.05 9.67 17.5 12 17.5Z" fill="white"/>
+                        </svg>
+                    </div>
+                    <div class="feature-card-content">
+                        <h3>Zawsze uprzejmy i cierpliwy</h3>
+                        <p>Nigdy się nie denerwuje, nie traci cierpliwości. Każdy pacjent traktowany jest z taką samą życzliwością.</p>
+                    </div>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="feature-card">
+                    <div class="feature-card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M13 2.05V4.05C17.39 4.59 20.5 8.58 19.96 12.97C19.5 16.61 16.64 19.5 13 19.93V21.93C18.5 21.38 22.5 16.5 21.95 11C21.5 6.25 17.73 2.5 13 2.05ZM11 2.06C9.05 2.25 7.19 3 5.67 4.26L7.1 5.74C8.22 4.84 9.57 4.26 11 4.06V2.06ZM4.26 5.67C3 7.19 2.25 9.04 2.05 11H4.05C4.24 9.58 4.8 8.23 5.69 7.1L4.26 5.67ZM2.06 13C2.26 14.96 3.03 16.81 4.27 18.33L5.69 16.9C4.81 15.77 4.24 14.42 4.06 13H2.06ZM7.1 18.37L5.67 19.74C7.18 21 9.04 21.79 11 22V20C9.58 19.82 8.23 19.25 7.1 18.37ZM12 16.5L7.5 12H11V7H13V12H16.5L12 16.5Z" fill="white"/>
+                        </svg>
+                    </div>
+                    <div class="feature-card-content">
+                        <h3>Natychmiastowa odpowiedź</h3>
+                        <p>Zero czekania na połączenie. Pacjent od razu rozmawia z asystentem i załatwia sprawę w kilkadziesiąt sekund.</p>
+                    </div>
+                </div>
+
+                <!-- Feature 7 -->
+                <div class="feature-card">
+                    <div class="feature-card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM13 17H11V11H13V17ZM13 9H11V7H13V9Z" fill="white"/>
+                        </svg>
+                    </div>
+                    <div class="feature-card-content">
+                        <h3>Spójne i aktualne informacje</h3>
+                        <p>Udziela tylko zweryfikowanych informacji o placówce. Brak pomyłek, nieścisłości czy zapomnianych szczegółów.</p>
+                    </div>
+                </div>
+
+                <!-- Feature 8 -->
+                <div class="feature-card">
+                    <div class="feature-card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 15.5C18.8 15.5 17.5 15.3 16.4 14.9C16.3 14.9 16.2 14.9 16.1 14.9C15.8 14.9 15.6 15 15.4 15.2L13.2 17.4C10.4 15.9 8 13.6 6.6 10.8L8.8 8.6C9.1 8.3 9.2 7.9 9 7.6C8.7 6.5 8.5 5.2 8.5 4C8.5 3.5 8 3 7.5 3H4C3.5 3 3 3.5 3 4C3 13.4 10.6 21 20 21C20.5 21 21 20.5 21 20V16.5C21 16 20.5 15.5 20 15.5Z" fill="white"/>
+                        </svg>
+                    </div>
+                    <div class="feature-card-content">
+                        <h3>Przekierowanie do pracownika</h3>
+                        <p>W nietypowych sytuacjach płynnie przekazuje rozmowę do pracownika recepcji. Pacjent nigdy nie zostaje bez pomocy.</p>
+                    </div>
+                </div>
+
+                <!-- Feature 9 -->
+                <div class="feature-card">
+                    <div class="feature-card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2ZM20 16H6L4 18V4H20V16ZM17 12H15V10H17V12ZM13 12H11V10H13V12ZM9 12H7V10H9V12Z" fill="white"/>
+                        </svg>
+                    </div>
+                    <div class="feature-card-content">
+                        <h3>Automatyczne potwierdzenia</h3>
+                        <p>Po rozmowie wysyła SMS z potwierdzeniem wizyty — datą, godziną i adresem. Mniej nieobecności pacjentów.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Time Savings Section -->
+    <section class="section savings-section">
+        <div class="container">
+            <div class="savings-header">
+                <h2>Oszczędność <span class="gradient-text">czasu</span></h2>
+                <p>Zobacz ile czasu możesz odzyskać dzięki automatyzacji obsługi telefonicznej</p>
+            </div>
+
+            <div class="savings-layout">
+                <!-- Left side - inputs -->
+                <div class="savings-inputs">
+                    <div class="input-row slider-row">
+                        <div class="row-icon">
+                            <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" fill="white"/></svg>
+                        </div>
+                        <div class="row-content">
+                            <div class="row-value"><span id="callsValue">50</span> telefonów</div>
+                            <div class="row-label">dziennie do odebrania</div>
+                            <input type="range" id="callsSlider" min="20" max="500" step="10" value="50" class="savings-slider">
+                        </div>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="row-icon">
+                            <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" fill="white"/></svg>
+                        </div>
+                        <div class="row-content">
+                            <div class="row-value">2 minuty</div>
+                            <div class="row-label">średni czas rozmowy</div>
+                        </div>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="row-icon">
+                            <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm-8 4H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z" fill="white"/></svg>
+                        </div>
+                        <div class="row-content">
+                            <div class="row-value">22 dni</div>
+                            <div class="row-label">roboczych w miesiącu</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right side - visual results -->
+                <div class="savings-visual">
+                    <div class="time-circle">
+                        <div class="circle-bg">
+                            <div class="circle-inner">
+                                <div class="big-number" id="savingsHours">36,7</div>
+                                <div class="big-unit">godzin</div>
+                            </div>
+                        </div>
+
+                        <!-- Floating stats -->
+                        <div class="floating-stat stat-minutes">
+                            <div class="stat-icon">
+                                <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="savingsMinutes">2 200 min</div>
+                                <div class="stat-label">miesięcznie</div>
+                            </div>
+                        </div>
+
+                        <div class="floating-stat stat-days">
+                            <div class="stat-icon">
+                                <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="savingsDays">4,5 dni</div>
+                                <div class="stat-label">roboczych</div>
+                            </div>
+                        </div>
+
+                        <div class="floating-stat stat-yearly">
+                            <div class="stat-icon">
+                                <svg viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="savingsYearly">440 h / rok</div>
+                                <div class="stat-label" id="savingsYearlyDays">55 dni roboczych</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison Table Section -->
+    <section class="section comparison-section">
+        <div class="container">
+            <div class="comparison-header">
+                <h2>Recepcjonista vs <span class="gradient-text">VoiceLink</span></h2>
+                <p>Porównanie kluczowych aspektów obsługi telefonicznej</p>
+            </div>
+
+            <div class="comparison-table-wrapper">
+            <div class="comparison-table">
+                <div class="comparison-table-header">
+                    <div class="col-feature">Aspekt</div>
+                    <div class="col-label">Recepcjonista</div>
+                    <div class="col-label">VoiceLink AI</div>
+                </div>
+
+                <div class="comparison-row">
+                    <div class="row-feature">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12C2 17.52 6.47 22 11.99 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 11.99 2ZM12 20C7.58 20 4 16.42 4 12C4 7.58 7.58 4 12 4C16.42 4 20 7.58 20 12C20 16.42 16.42 20 12 20ZM12.5 7H11V13L16.25 16.15L17 14.92L12.5 12.25V7Z"/></svg>
+                        </div>
+                        <span>Dostępność</span>
+                    </div>
+                    <div class="col-value">
+                        <div class="value-text negative">8h / dzień</div>
+                    </div>
+                    <div class="col-value">
+                        <div class="value-text positive">24/7</div>
+                    </div>
+                </div>
+
+                <div class="comparison-row">
+                    <div class="row-feature">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24"><path d="M20 15.5C18.8 15.5 17.5 15.3 16.4 14.9L15.4 15.2L13.2 17.4C10.4 15.9 8 13.6 6.6 10.8L8.8 8.6L9 7.6C8.7 6.5 8.5 5.2 8.5 4C8.5 3.5 8 3 7.5 3H4C3.5 3 3 3.5 3 4C3 13.4 10.6 21 20 21C20.5 21 21 20.5 21 20V16.5C21 16 20.5 15.5 20 15.5Z"/></svg>
+                        </div>
+                        <span>Rozmowy jednocześnie</span>
+                    </div>
+                    <div class="col-value">
+                        <div class="value-text negative">1</div>
+                    </div>
+                    <div class="col-value">
+                        <div class="value-text positive">do 10</div>
+                    </div>
+                </div>
+
+                <div class="comparison-row">
+                    <div class="row-feature">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12C2 17.52 6.47 22 11.99 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 11.99 2ZM12 20C7.58 20 4 16.42 4 12C4 7.58 7.58 4 12 4C16.42 4 20 7.58 20 12C20 16.42 16.42 20 12 20ZM15.5 11C16.33 11 17 10.33 17 9.5C17 8.67 16.33 8 15.5 8C14.67 8 14 8.67 14 9.5C14 10.33 14.67 11 15.5 11ZM8.5 11C9.33 11 10 10.33 10 9.5C10 8.67 9.33 8 8.5 8C7.67 8 7 8.67 7 9.5C7 10.33 7.67 11 8.5 11ZM12 17.5C14.33 17.5 16.32 16.05 17.12 14H6.88C7.68 16.05 9.67 17.5 12 17.5Z"/></svg>
+                        </div>
+                        <span>Humor i nastrój</span>
+                    </div>
+                    <div class="col-value">
+                        <div class="value-text negative">Zmienny</div>
+                    </div>
+                    <div class="col-value">
+                        <div class="value-text positive">Zawsze dobry</div>
+                    </div>
+                </div>
+
+                <div class="comparison-row">
+                    <div class="row-feature">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM13 17H11V15H13V17ZM13 13H11V7H13V13Z"/></svg>
+                        </div>
+                        <span>Spójność informacji</span>
+                    </div>
+                    <div class="col-value">
+                        <div class="value-text negative">Mogą być błędy</div>
+                    </div>
+                    <div class="col-value">
+                        <div class="value-text positive">100% spójne</div>
+                    </div>
+                </div>
+
+                <div class="comparison-row">
+                    <div class="row-feature">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24"><path d="M15.5 14H14.71L14.43 13.73C15.41 12.59 16 11.11 16 9.5C16 5.91 13.09 3 9.5 3C5.91 3 3 5.91 3 9.5C3 13.09 5.91 16 9.5 16C11.11 16 12.59 15.41 13.73 14.43L14 14.71V15.5L19 20.49L20.49 19L15.5 14ZM9.5 14C7.01 14 5 11.99 5 9.5C5 7.01 7.01 5 9.5 5C11.99 5 14 7.01 14 9.5C14 11.99 11.99 14 9.5 14Z"/></svg>
+                        </div>
+                        <span>Cierpliwość</span>
+                    </div>
+                    <div class="col-value">
+                        <div class="value-text negative">Ograniczona</div>
+                    </div>
+                    <div class="col-value">
+                        <div class="value-text positive">Nieskończona</div>
+                    </div>
+                </div>
+
+                <div class="comparison-row">
+                    <div class="row-feature">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24"><path d="M11.8 10.9C9.53 10.31 8.8 9.7 8.8 8.75C8.8 7.66 9.81 6.9 11.5 6.9C13.28 6.9 13.94 7.75 14 9H16.21C16.14 7.28 15.09 5.7 13 5.19V3H10V5.16C8.06 5.58 6.5 6.84 6.5 8.77C6.5 11.08 8.41 12.23 11.2 12.9C13.7 13.5 14.2 14.38 14.2 15.31C14.2 16 13.71 17.1 11.5 17.1C9.44 17.1 8.63 16.18 8.52 15H6.32C6.44 17.19 8.08 18.42 10 18.83V21H13V18.85C14.95 18.48 16.5 17.35 16.5 15.3C16.5 12.46 14.07 11.49 11.8 10.9Z"/></svg>
+                        </div>
+                        <span>Koszt miesięczny</span>
+                    </div>
+                    <div class="col-value">
+                        <div class="value-text negative">~5 000 zł</div>
+                    </div>
+                    <div class="col-value">
+                        <div class="value-text positive">~2 000 zł</div>
+                    </div>
+                </div>
+
+                <div class="comparison-footer">
+                    <p>Wybór jest prosty — <span>VoiceLink to przyszłość obsługi pacjenta</span></p>
+                </div>
+            </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Summary Section -->
+    <section class="section benefits-section">
+        <div class="container">
+            <div class="benefits-header">
+                <h2>Korzyści dla <span class="gradient-text">Twojej placówki</span></h2>
+                <p>Podsumowanie najważniejszych zalet wdrożenia asystenta VoiceLink</p>
+            </div>
+
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-card-icon">
+                        <svg viewBox="0 0 24 24"><path d="M16 11C17.66 11 18.99 9.66 18.99 8C18.99 6.34 17.66 5 16 5C14.34 5 13 6.34 13 8C13 9.66 14.34 11 16 11ZM8 11C9.66 11 10.99 9.66 10.99 8C10.99 6.34 9.66 5 8 5C6.34 5 5 6.34 5 8C5 9.66 6.34 11 8 11ZM8 13C5.67 13 1 14.17 1 16.5V19H15V16.5C15 14.17 10.33 13 8 13ZM16 13C15.71 13 15.38 13.02 15.03 13.05C16.19 13.89 17 15.02 17 16.5V19H23V16.5C23 14.17 18.33 13 16 13Z" fill="white"/></svg>
+                    </div>
+                    <h3>Odciążona recepcja</h3>
+                    <p>Pracownicy wreszcie mogą skupić się na pacjentach przy stanowisku obsługi i ważniejszych zadaniach</p>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-card-icon">
+                        <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12C2 17.52 6.47 22 11.99 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 11.99 2ZM12 20C7.58 20 4 16.42 4 12C4 7.58 7.58 4 12 4C16.42 4 20 7.58 20 12C20 16.42 16.42 20 12 20ZM12.5 7H11V13L16.25 16.15L17 14.92L12.5 12.25V7Z" fill="white"/></svg>
+                    </div>
+                    <h3>Oszczędność czasu</h3>
+                    <p>Ponad 35 godzin miesięcznie zaoszczędzone na obsłudze telefonicznej</p>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-card-icon">
+                        <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12C2 17.52 6.47 22 11.99 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 11.99 2ZM12 20C7.58 20 4 16.42 4 12C4 7.58 7.58 4 12 4C16.42 4 20 7.58 20 12C20 16.42 16.42 20 12 20ZM15.5 11C16.33 11 17 10.33 17 9.5C17 8.67 16.33 8 15.5 8C14.67 8 14 8.67 14 9.5C14 10.33 14.67 11 15.5 11ZM8.5 11C9.33 11 10 10.33 10 9.5C10 8.67 9.33 8 8.5 8C7.67 8 7 8.67 7 9.5C7 10.33 7.67 11 8.5 11ZM12 17.5C14.33 17.5 16.32 16.05 17.12 14H6.88C7.68 16.05 9.67 17.5 12 17.5Z" fill="white"/></svg>
+                    </div>
+                    <h3>Zadowoleni pacjenci</h3>
+                    <p>Koniec z kolejkami i zajętym sygnałem — każdy pacjent zostaje obsłużony</p>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-card-icon">
+                        <svg viewBox="0 0 24 24"><path d="M11.8 10.9C9.53 10.31 8.8 9.7 8.8 8.75C8.8 7.66 9.81 6.9 11.5 6.9C13.28 6.9 13.94 7.75 14 9H16.21C16.14 7.28 15.09 5.7 13 5.19V3H10V5.16C8.06 5.58 6.5 6.84 6.5 8.77C6.5 11.08 8.41 12.23 11.2 12.9C13.7 13.5 14.2 14.38 14.2 15.31C14.2 16 13.71 17.1 11.5 17.1C9.44 17.1 8.63 16.18 8.52 15H6.32C6.44 17.19 8.08 18.42 10 18.83V21H13V18.85C14.95 18.48 16.5 17.35 16.5 15.3C16.5 12.46 14.07 11.49 11.8 10.9Z" fill="white"/></svg>
+                    </div>
+                    <h3>Zwiększony zysk</h3>
+                    <p>Więcej odebranych połączeń = więcej umówionych wizyt = większy przychód</p>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-card-icon">
+                        <svg viewBox="0 0 24 24"><path d="M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3ZM19 19H5V5H19V19ZM7 10H9V17H7V10ZM11 7H13V17H11V7ZM15 13H17V17H15V13Z" fill="white"/></svg>
+                    </div>
+                    <h3>Lepsza organizacja</h3>
+                    <p>Uporządkowane rezerwacje, mniej chaosu i pomyłek w grafiku</p>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-card-icon">
+                        <svg viewBox="0 0 24 24"><path d="M12 1L3 5V11C3 16.55 6.84 21.74 12 23C17.16 21.74 21 16.55 21 11V5L12 1ZM12 11.99H19C18.47 16.11 15.72 19.78 12 20.93V12H5V6.3L12 3.19V11.99Z" fill="white"/></svg>
+                    </div>
+                    <h3>Profesjonalny wizerunek</h3>
+                    <p>Nowoczesna obsługa buduje zaufanie i wyróżnia placówkę na tle konkurencji</p>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-card-icon">
+                        <svg viewBox="0 0 24 24"><path d="M16 6L18.29 8.29L13.41 13.17L9.41 9.17L2 16.59L3.41 18L9.41 12L13.41 16L19.71 9.71L22 12V6H16Z" fill="white"/></svg>
+                    </div>
+                    <h3>Skalowalność</h3>
+                    <p>Łatwe dostosowanie do rosnącej liczby pacjentów bez zatrudniania nowych osób</p>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-card-icon">
+                        <svg viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4C9.11 4 6.6 5.64 5.35 8.04C2.34 8.36 0 10.91 0 14C0 17.31 2.69 20 6 20H19C21.76 20 24 17.76 24 15C24 12.36 21.95 10.22 19.35 10.04ZM19 18H6C3.79 18 2 16.21 2 14C2 11.95 3.53 10.24 5.56 10.03L6.63 9.92L7.13 8.97C8.08 7.14 9.94 6 12 6C14.62 6 16.88 7.86 17.39 10.43L17.69 11.93L19.22 12.04C20.78 12.14 22 13.45 22 15C22 16.65 20.65 18 19 18ZM10 17L14.59 12.41L13.17 11L10 14.17L8.83 13L7.41 14.41L10 17Z" fill="white"/></svg>
+                    </div>
+                    <h3>Spokój i pewność</h3>
+                    <p>Wiesz, że każde połączenie zostanie odebrane — nawet gdy Cię nie ma</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stages Section -->
+    <section class="section stages-section">
+        <div class="container">
+            <div class="stages-header">
+                <h2>Etapy <span class="gradient-text">współpracy</span></h2>
+                <p>Przejrzysty i prosty proces od pierwszego kontaktu do pełnego wdrożenia asystenta AI w Twojej placówce</p>
+            </div>
+
+            <div class="stages-flow">
+                <!-- Rząd 1: etapy 1-4 (lewo -> prawo) -->
+                <div class="stages-row">
+                    <div class="stage-wrapper">
+                        <div class="stage-card">
+                            <div class="stage-card-bg"></div>
+                            <div class="stage-number">1</div>
+                            <h3>Spotkanie zapoznawcze</h3>
+                            <p>Poznajemy Twoją placówkę, analizujemy potrzeby i omawiamy możliwości automatyzacji.</p>
+                        </div>
+                    </div>
+                    <div class="stage-wrapper">
+                        <div class="stage-card">
+                            <div class="stage-card-bg"></div>
+                            <div class="stage-number">2</div>
+                            <h3>Przygotowanie oferty</h3>
+                            <p>Tworzymy spersonalizowaną ofertę dopasowaną do skali i specyfiki Twojej placówki.</p>
+                        </div>
+                    </div>
+                    <div class="stage-wrapper">
+                        <div class="stage-card">
+                            <div class="stage-card-bg"></div>
+                            <div class="stage-number">3</div>
+                            <h3>Podpisanie umowy</h3>
+                            <p>Formalizujemy współpracę — jasne warunki, przejrzyste zasady i pełne bezpieczeństwo.</p>
+                        </div>
+                    </div>
+                    <div class="stage-wrapper">
+                        <div class="stage-card">
+                            <div class="stage-card-bg"></div>
+                            <div class="stage-number">4</div>
+                            <h3>Spotkanie projektowe</h3>
+                            <p>Ustalamy estetykę agenta, zakres działań, osobowość, ton głosu i bazę wiedzy.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pionowy łącznik -->
+                <div class="stages-connector">
+                    <div class="stages-connector-line"></div>
+                </div>
+
+                <!-- Rząd 2: etapy 5-8 (prawo -> lewo wizualnie) -->
+                <div class="stages-row">
+                    <div class="stage-wrapper" style="order: 4;">
+                        <div class="stage-card">
+                            <div class="stage-card-bg"></div>
+                            <div class="stage-number">5</div>
+                            <h3>Tworzenie agenta</h3>
+                            <p>Budujemy asystenta AI, konfigurujemy scenariusze i podłączamy do systemu rezerwacji.</p>
+                            <span class="stage-badge">ok. 2 tygodnie</span>
+                        </div>
+                    </div>
+                    <div class="stage-wrapper" style="order: 3;">
+                        <div class="stage-card">
+                            <div class="stage-card-bg"></div>
+                            <div class="stage-number">6</div>
+                            <h3>Agent do akceptacji</h3>
+                            <p>Prezentujemy gotowego agenta — testujesz rozmowy i zgłaszasz ewentualne uwagi.</p>
+                        </div>
+                    </div>
+                    <div class="stage-wrapper" style="order: 2;">
+                        <div class="stage-card">
+                            <div class="stage-card-bg"></div>
+                            <div class="stage-number">7</div>
+                            <h3>Ewentualne poprawki</h3>
+                            <p>Wprowadzamy korekty na podstawie Twojego feedbacku — agent działa jak oczekujesz.</p>
+                        </div>
+                    </div>
+                    <div class="stage-wrapper" style="order: 1;">
+                        <div class="stage-card">
+                            <div class="stage-card-bg"></div>
+                            <div class="stage-number">8</div>
+                            <h3>Pełne wdrożenie</h3>
+                            <p>Podłączamy agenta pod numer, testowe rezerwacje i uruchamiamy pełną obsługę.</p>
+                            <div class="stage-complete-check">
+                                <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- What You Get Section -->
+    <section class="section whatyouget-section">
+        <div class="container">
+            <div class="whatyouget-header">
+                <h2>Co <span class="gradient-text">otrzymujesz?</span></h2>
+                <p>Współpraca z VoiceLink to nie tylko technologia — to pełne partnerstwo i ciągłe doskonalenie Twojego asystenta</p>
+            </div>
+
+            <div class="whatyouget-grid">
+                <!-- Card 1: AI Assistant -->
+                <div class="whatyouget-card">
+                    <div class="whatyouget-card-top">
+                        <div class="whatyouget-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M21 10.12h-6.78l2.74-2.82c-2.73-2.7-7.15-2.8-9.88-.1-2.73 2.71-2.73 7.08 0 9.79s7.15 2.71 9.88 0C18.32 15.65 19 14.08 19 12.1h2c0 1.98-.88 4.55-2.64 6.29-3.51 3.48-9.21 3.48-12.72 0-3.5-3.47-3.5-9.11 0-12.58 3.51-3.47 9.14-3.47 12.65 0L21 3v7.12zM12.5 8v4.25l3.5 2.08-.72 1.21L11 13V8h1.5z" fill="white"/>
+                            </svg>
+                        </div>
+                        <h3>Asystent AI 24/7</h3>
+                        <p>Dedykowany asystent głosowy AI, w pełni dostosowany do specyfiki Twojej placówki</p>
+                    </div>
+                    <ul class="whatyouget-features">
+                        <li>
+                            <span class="check-icon"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg></span>
+                            <span>Konfiguracja pod Twoje scenariusze rozmów</span>
+                        </li>
+                        <li>
+                            <span class="check-icon"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg></span>
+                            <span>Integracja z systemem rezerwacji</span>
+                        </li>
+                        <li>
+                            <span class="check-icon"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg></span>
+                            <span>Automatyczne SMS-y z potwierdzeniem</span>
+                        </li>
+                        <li>
+                            <span class="check-icon"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg></span>
+                            <span>Automatyzacja obsługi klienta i rezerwacji wizyt w 100%</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Card 2: Full Support -->
+                <div class="whatyouget-card">
+                    <div class="whatyouget-card-top">
+                        <div class="whatyouget-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 1L3 5V11C3 16.55 6.84 21.74 12 23C17.16 21.74 21 16.55 21 11V5L12 1ZM12 11.99H19C18.47 16.11 15.72 19.78 12 20.93V12H5V6.3L12 3.19V11.99Z" fill="white"/>
+                            </svg>
+                        </div>
+                        <h3>Pełne wsparcie techniczne</h3>
+                        <p>Od wdrożenia po codzienną obsługę — jesteśmy z Tobą na każdym etapie</p>
+                    </div>
+                    <ul class="whatyouget-features">
+                        <li>
+                            <span class="check-icon"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg></span>
+                            <span>Dedykowany opiekun projektu</span>
+                        </li>
+                        <li>
+                            <span class="check-icon"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg></span>
+                            <span>Szybka pomoc przy zmianach i aktualizacjach</span>
+                        </li>
+                        <li>
+                            <span class="check-icon"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg></span>
+                            <span>Monitoring działania agenta</span>
+                        </li>
+                        <li>
+                            <span class="check-icon"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg></span>
+                            <span>Bieżące dostosowywanie do potrzeb</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Card 3: Monthly Reports -->
+                <div class="whatyouget-card">
+                    <div class="whatyouget-card-top">
+                        <div class="whatyouget-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3ZM19 19H5V5H19V19ZM7 10H9V17H7V10ZM11 7H13V17H11V7ZM15 13H17V17H15V13Z" fill="white"/>
+                            </svg>
+                        </div>
+                        <h3>Comiesięczne raporty i spotkania</h3>
+                        <p>Pełna transparentność — wiesz dokładnie, jak pracuje Twój asystent AI</p>
+                    </div>
+                    <ul class="whatyouget-features">
+                        <li>
+                            <span class="check-icon"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg></span>
+                            <span>Szczegółowe statystyki agenta (połączenia, czas, skuteczność)</span>
+                        </li>
+                        <li>
+                            <span class="check-icon"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg></span>
+                            <span>Comiesięczne spotkanie omawiające wyniki</span>
+                        </li>
+                        <li>
+                            <span class="check-icon"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg></span>
+                            <span>Analiza trendów i rekomendacje usprawnień</span>
+                        </li>
+                        <li>
+                            <span class="check-icon"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg></span>
+                            <span>Wspólne planowanie dalszego rozwoju</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA Section -->
+    <section class="final-cta-section">
+        <div class="final-cta-content">
+            <img src="logo.png" alt="VoiceLink" class="final-cta-logo">
+            <h2 class="final-cta-title">Dołącz do rewolucji<br>i skaluj z pomocą <span>VoiceLink</span></h2>
+            <p class="final-cta-subtitle">Automatyzacja obsługi telefonicznej, która zmienia zasady gry</p>
+        </div>
+    </section>
+
+    <script>
+        // Savings calculator
+        const callsSlider = document.getElementById('callsSlider');
+        const callsValue = document.getElementById('callsValue');
+        const savingsHours = document.getElementById('savingsHours');
+        const savingsMinutes = document.getElementById('savingsMinutes');
+        const savingsDays = document.getElementById('savingsDays');
+        const savingsYearly = document.getElementById('savingsYearly');
+        const savingsYearlyDays = document.getElementById('savingsYearlyDays');
+
+        function updateSavings() {
+            const calls = parseInt(callsSlider.value);
+            const avgMinutes = 2;
+            const workDays = 22;
+
+            callsValue.textContent = calls;
+
+            // Obliczenia
+            const totalMinutesMonth = calls * avgMinutes * workDays;
+            const totalHoursMonth = Math.ceil(totalMinutesMonth / 60);
+            const totalDaysMonth = Math.ceil(totalHoursMonth / 8);
+            const totalHoursYear = Math.ceil(totalHoursMonth * 12);
+            const totalDaysYear = Math.ceil(totalHoursYear / 8);
+
+            // Formatowanie
+            savingsHours.textContent = totalHoursMonth.toLocaleString('pl-PL');
+            savingsMinutes.textContent = totalMinutesMonth.toLocaleString('pl-PL') + ' min';
+            savingsDays.textContent = totalDaysMonth + ' dni';
+            savingsYearly.textContent = totalHoursYear.toLocaleString('pl-PL') + ' h / rok';
+            savingsYearlyDays.textContent = totalDaysYear + ' dni roboczych';
+        }
+
+        callsSlider.addEventListener('input', updateSavings);
+        updateSavings();
+
+        // Stages navigation - keyboard control
+        const stageCards = document.querySelectorAll('.stage-card');
+        const stageWrappers = document.querySelectorAll('.stage-wrapper');
+        const stagesConnector = document.querySelector('.stages-connector');
+        let currentStage = 0;
+        let stagesStarted = false;
+        let stagesVisible = false;
+
+        function updateStageUI() {
+            stageCards.forEach((card, i) => {
+                card.classList.remove('stage-active', 'stage-complete', 'stage-fade');
+                if (i < currentStage) {
+                    card.classList.add('stage-visited');
+                } else {
+                    card.classList.remove('stage-visited');
+                }
+            });
+
+            // Aktualizuj klasy na wrapperach
+            stageWrappers.forEach((wrapper, i) => {
+                if (i < currentStage) {
+                    wrapper.classList.add('wrapper-visited');
+                } else {
+                    wrapper.classList.remove('wrapper-visited');
+                }
+            });
+
+            // Pionowy łącznik - zielony gdy etap 4 przeszedł (index 3)
+            if (stagesConnector) {
+                stagesConnector.classList.toggle('connector-visited', currentStage > 3);
+            }
+
+            if (stageCards[currentStage]) {
+                stageCards[currentStage].classList.add('stage-active');
+
+                if (currentStage === stageCards.length - 1) {
+                    stageCards[currentStage].classList.add('stage-complete');
+                }
+            }
+        }
+
+        function nextStage() {
+            if (currentStage < stageCards.length - 1) {
+                currentStage++;
+                updateStageUI();
+            }
+        }
+
+        function prevStage() {
+            if (currentStage > 0) {
+                if (currentStage === stageCards.length - 1) {
+                    stageCards[currentStage].classList.add('stage-fade');
+                    setTimeout(() => {
+                        currentStage--;
+                        updateStageUI();
+                    }, 200);
+                    return;
+                }
+                currentStage--;
+                updateStageUI();
+            }
+        }
+
+        // Nasłuchiwanie klawiszy strzałek
+        document.addEventListener('keydown', function(e) {
+            if (!stagesVisible) return;
+            if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                nextStage();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevStage();
+            }
+        });
+
+        // Startuj od etapu 1 gdy sekcja widoczna
+        const stagesSection = document.querySelector('.stages-section');
+        const stagesObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                stagesVisible = entry.isIntersecting;
+                if (entry.isIntersecting && !stagesStarted) {
+                    stagesStarted = true;
+                    currentStage = 0;
+                    updateStageUI();
+                }
+            });
+        }, { threshold: 0.2 });
+
+        if (stagesSection) {
+            stagesObserver.observe(stagesSection);
+        }
+
+        // Scroll animation observer
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all sections
+        document.querySelectorAll('.section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Fullscreen toggle
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+    </script>
+</body>
+</html>
+
